@@ -4,52 +4,95 @@
 // even more here
 
 // Declare global variables
+// here
+// more here
+// even more here
 
-// Function to choose which algorithm to use
-void chooseSchedulingAlgorithm() {
-	switch (algorithm) {
-		case 1 :
-			// set algorithm equal to whatever
-			break;
-		case 2:
-			// set algorithm equal to whatever
-			break;
-		default:
-			cout << "No matching algorithm provided" << endl;
-			exit(EXIT_FAILURE);
-	}
-}
+
+// Function to choose which algorithm to use (probably will implement via command line args)
+// void chooseSchedulingAlgorithm() {
+// 	switch (algorithm) {
+// 		case 1:
+// 			// set algorithm equal to whatever
+// 			break;
+// 		case 2:
+// 			// set algorithm equal to whatever
+// 			break;
+// 		default:
+// 			cout << "No matching algorithm provided" << endl;
+// 			exit(EXIT_FAILURE);
+// 	}
+// }
 
 // Calculate the priority of process
-int calculatePriority (string spriority) {
-
-}
+// int calculatePriority (string spriority) {
+//
+// }
 
 
 // Process object
-struct PROCESS {
+class Process {
 
-	// Process attributes
+	// Process attributes (virtual PCB)
 	int pid;
 	int status;
 	int priority;
 
 	// default constructor
-	PROCESS(){
+	Process(){
 		pid = 0;
 		// more
 		// and more
 	}
 
 	// getter
-	void getPROCESS() {
+	void getProcess() {
 		cout << "\nPROCESS ID : " << pid << endl;
 	}
 
 	// setter
-	void setPROCESS(int pid1) {
+	void setProcess(int pid1) {
 		pid = pid1;
 	}
+};
+
+// Dispatcher object
+class Dispatcher {
+
+		// Dispatcher attributes
+		// int x;
+		// int potato;
+
+		// default constructor
+		Dispatcher() {
+
+		}
+
+		// getter
+		void getDispatcher() {
+			// getter stuff
+		}
+
+		// setter
+		void setDispatcher() {
+			// setter stuff
+		}
+
+};
+
+// ************************ PROGRAM FILE HANDLING *****************************
+
+// interprets the input .txt files for the simulator that hold fake programs
+void readProgramFile() {
+	// takes "program file" text file as input
+
+	// reads program file,
+	//	interprets attributes: name, total runtime, memory,
+	//	and then finally, operations (CALCULATE, I/O, etc. ... EXE)
+
+	// generates user-specified number of processes from program file (hence randomization of values from templates must be used)
+
+	// return a process object
 }
 
 // ***************************** ALGORITHMS ***********************************
@@ -58,18 +101,30 @@ struct PROCESS {
 void firstComeFirstServe() {
 
 	// declare structures
-	queue<PROCESS> readyQueue;
-	queue<PROCESS> waitingQueue;
-	queue<PROCESS> exitQueue;
-	list<PROCESS> blockedQueue;
-	PROCESS runningProcess;
+	queue<Process> readyQueue;
+	queue<Process> waitingQueue;
+	queue<Process> exitQueue;
+	list<Process> blockedQueue;
+	Process runningProcess;
 
 	// declare variables
 	int time = 0;
+
+	// do the algorithm
 }
 
 // round robin algorithm
-void roundRobin() {
+// void roundRobin() {
+//
+// }
 
-}
+// and other algorithms
+
 // ****************************************************************************
+
+// ***************************** MAIN *****************************************
+int main(int argc, char**argv) {
+
+	// create objects,
+	// do simulation
+}
