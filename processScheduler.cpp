@@ -35,6 +35,8 @@ class Process {
 
 	// Process attributes (virtual PCB)
 	int pid;
+	// int arrivalTime;
+	// int burstTime;
 	int status;
 	int priority;
 
