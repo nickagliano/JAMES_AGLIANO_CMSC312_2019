@@ -82,6 +82,13 @@ class Dispatcher {
 
 };
 
+// Clock object not sure if this is needed yet
+class Clock {
+	// create an "abstract time" to be used by the OS
+	// example, 1 "time unit" will be the atomic time unit
+	//	a process could take 15 "time units" to execute
+};
+
 // ************************ PROGRAM FILE HANDLING *****************************
 
 // interprets the input .txt files for the simulator that hold fake programs
