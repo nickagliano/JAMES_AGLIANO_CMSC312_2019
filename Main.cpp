@@ -20,13 +20,10 @@ int main(int argc, char**argv) {
 	// ProgramFileRandomizer->randomize();
 
 
-	Scheduler* scheduler = new class Scheduler(); // declare scheduler
+	Scheduler* scheduler = new class Scheduler(0); // declare scheduler, use firstComeFirstServe algorithm
 
-	scheduler->setAlgorithm(0); // use firstComeFirstServe algorithm
-
-	scheduler->readProgramFile("programFiles/randomFile1.txt"); // process a program file
+	scheduler->run();
 
 	scheduler->printQueue(scheduler->getReadyQueue());
-
 
 }

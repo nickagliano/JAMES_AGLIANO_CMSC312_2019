@@ -17,10 +17,14 @@ Scheduler::Scheduler() {
 	// this->exitQueue = value;
 	// this->blockedQueue = value;
 	// this->runningProcess = value;
+	this->priorityCounter = 0;
+	this->pidCounter = 0;
 }
 
 // parameterized constructor
 Scheduler::Scheduler(int algorithm) {
+	this->priorityCounter = 0;
+	this->pidCounter = 0;
 	setAlgorithm(algorithm);
 }
 
@@ -54,7 +58,7 @@ void Scheduler::readProgramFile(string filePath) {
 					ioValue = stoi(line.substr(4, line.length()-1));
 
 					Process ioProcess;
-					ioProcess.setProcess(ioProcess.generatePid(), 0, 0);
+					ioProcess.setProcess(generatePid(), 1, calcPriority());
 					// ioProcess.printProcess();
 
 					addToQueue(1, ioProcess);
@@ -63,14 +67,12 @@ void Scheduler::readProgramFile(string filePath) {
 					calcValue = stoi(line.substr(10, line.length()-1));
 
 					Process calcProcess;
-					calcProcess.setProcess(calcProcess.generatePid(), 0, 0);
+					calcProcess.setProcess(generatePid(), 1, calcPriority());
 					// calcProcess.printProcess();
 
 					addToQueue(1, calcProcess);
 
 				} else if (line.substr(0, 3).compare("EXE") == 0) { // end command
-					cout << "Found execute command: " << line << endl;
-
 					break;
 				}
 			}
@@ -119,7 +121,6 @@ void Scheduler::addToQueue(int queue, Process process) {
 void Scheduler::printQueue(queue<Process> q) {
 	//printing content of queue
 	while (!q.empty()) {
-		cout << "hi" << endl;
 		q.front().printProcess();
 		q.pop();
 	}
@@ -127,12 +128,33 @@ void Scheduler::printQueue(queue<Process> q) {
 
 
 // calculates a process' priority given based on what algorithm is set to
-int Scheduler::calcPriority(Process p) {
+int Scheduler::calcPriority() {
 	if (this->algorithm == 0) {
-		return firstComeFirstServe(p);
+		int priority = getPriorityCounter();
+		incrementPriorityCounter();
+		return priority;
+
 	} else if (this->algorithm == 1) {
-		return roundRobin(p);
+		return 0;
+	} else {
+		return 0;
 	}
+}
+
+
+// run through processes, using scheduling parameters that were set,
+//	algorithm that was specified, etc.
+void Scheduler::run() {
+	cout << "Starting scheduler!!" << endl;
+	if (algorithm == 0) {
+		cout << "Prioritizing processes using First Come First Serve algorithm" << endl;
+	} else if (algorithm == 1) {
+		cout << "Prioritizing processes using Round Robin algorithm" << endl;
+	}
+
+	readProgramFile("programFiles/randomFile1.txt"); // process a program file
+	readProgramFile("programFiles/randomFile2.txt"); // process a program file
+
 }
 
 
@@ -145,21 +167,27 @@ void Scheduler::setAlgorithm(int algorithm) {
 	}
 }
 
+void Scheduler::incrementPriorityCounter() {
+	this->priorityCounter++;
+}
+
+// generates a unique PID
+int Scheduler::generatePid() {
+	int pid = getPidCounter();
+	this->pidCounter++;
+	return pid;
+}
+
 // ----------------------- SCHEDULING ALGORITHMS ------------------------------
 
 // first come first serve scheduling algorithm
 // 	input a process,
 // 		return int priority value for that process according to when it arrived
 			// in the queue relative to other processes
-int Scheduler::firstComeFirstServe(Process p) {
-
-	int priority = 9;
-
-	return priority;
+void Scheduler::firstComeFirstServe() {
 }
 
 
 // round robin scheduling algorithm
-void Scheduler::roundRobin(Process p) {
-
+void Scheduler::roundRobin() {
 }

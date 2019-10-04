@@ -20,17 +20,14 @@ void Process::setProcess(int pid, int status, int priority) {
 	this->priority = priority;
 }
 
-int Process::generatePid() {
-	return 10; //set to 10 just for testing until I generate a key generation
+void Process::setPriority(int priority) {
+	this->priority = priority;
 }
 
 void Process::printProcess() {
 	cout << "--------------------------------------------------------" << endl;
-	cout << "Pid:" << endl;
-	cout << this->pid << endl;
-	cout << "Status:" << endl;
-	cout << this->status << endl;
-	cout << "Priority:" << endl;
-	cout << this->priority << endl;
+	cout << "Pid: " << this->pid << endl;
+	cout << "Status: " << this->status << endl;
+	cout << "Priority:" << this->priority << endl;
 	cout << "--------------------------------------------------------" << endl;
 }

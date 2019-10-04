@@ -15,6 +15,8 @@ class Scheduler {
 		list<Process> blockedQueue;
 		Process runningProcess;
 		int algorithm;
+		int priorityCounter;
+		int pidCounter;
 
 	public:
 		// default constructor
@@ -29,6 +31,8 @@ class Scheduler {
 		queue<Process> getExitQueue() { return exitQueue; }
 		list<Process> getBlockedQueue() { return blockedQueue; }
 		Process getRunningProcess() { return runningProcess; }
+		int getPriorityCounter() { return priorityCounter; }
+		int getPidCounter() { return pidCounter; }
 
 		// setters (need to figure out what i need to be able to set)
 			// here
@@ -36,47 +40,38 @@ class Scheduler {
 			// 		etc...
 
 		// member functions
+		void run();
+
 		void readProgramFile(string filePath);
 
-		void addToQueue(queue<Process> queue, Process process);
+		void addToQueue(int queue, Process p);
 
-		void removeFromQueue(queue<Process> queue, int pid);
+		void removeFromQueue(int queue, int pid);
 
 		void setAlgorithm(int algorithm);
 
-		void firstComeFirstServe();
-
 		void printQueue(queue<Process> queue);
 
+		void firstComeFirstServe();
 
-		// void roundRobin();
-		//
-		int calculatePriority();
+		void roundRobin();
+
+		int calcPriority();
+
+		int generatePid();
+
+		void incrementPriorityCounter();
+
+		void incrementPidCounter();
+
 };
 
-// how to declare dispatcher object? it should probably inherit scheduler / be a subclass
 // Dispatcher object
-// class Dispatcher {
+// class Dispatcher : public Scheduler {
 //
-// 		// Dispatcher attributes
-// 		// int x;
-// 		// int potato;
+// 	private:
 //
-// 		// default constructor
-// 		Dispatcher() {
-//
-// 		}
-//
-// 		// getter
-// 		void getDispatcher() {
-// 			// getter stuff
-// 		}
-//
-// 		// setter
-// 		void setDispatcher() {
-// 			// setter stuff
-// 		}
-//
+// 	public:
 // };
 
 
