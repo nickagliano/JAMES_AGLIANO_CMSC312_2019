@@ -1,4 +1,4 @@
-Name: ProgramName
+Name: ProgramName3
 Total runtime: 300
 Memory: 20
 

@@ -1,5 +1,6 @@
 #include "Process.h"
 #include <iostream>
+#include <string>
 using namespace std;
 
 // Default constructor
@@ -17,6 +18,10 @@ void Process::setProcess(int pid, int status, int priority) {
 	this->pid = pid;
 	this->status = status;
 	this->priority = priority;
+}
+
+int Process::generatePid() {
+	return 10; //set to 10 just for testing until I generate a key generation
 }
 
 void Process::printProcess() {

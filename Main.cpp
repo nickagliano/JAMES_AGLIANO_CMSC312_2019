@@ -1,9 +1,10 @@
 #include <iostream>
 using namespace std;
 #include <string>
+#include <queue>
 #include "Process.h"
 #include "Scheduler.h"
-#include "ProgramFileRandomizer.h"
+// #include "ProgramFileRandomizer.h"
 
 // Declare global variables
 // here
@@ -18,13 +19,14 @@ int main(int argc, char**argv) {
 	//
 	// ProgramFileRandomizer->randomize();
 
-	// Process* testProcess = new Process(1, 2, 3);
-	// testProcess->setProcess(1, 2, 3);
-	// testProcess->printProcess();
 
-	Scheduler* Scheduler = new class Scheduler();
+	Scheduler* scheduler = new class Scheduler(); // declare scheduler
 
-	Scheduler->readProgramFile("programFiles/randomFile1.txt");
+	scheduler->setAlgorithm(0); // use firstComeFirstServe algorithm
+
+	scheduler->readProgramFile("programFiles/randomFile1.txt"); // process a program file
+
+	scheduler->printQueue(scheduler->getReadyQueue());
 
 
 }

@@ -23,8 +23,10 @@ class Process {
 		// setter (function defined in Process.cpp)
 		void setProcess(int pid, int status, int priority);
 
+		int generatePid();
+
 		void printProcess();
-		
+
 };
 
 #endif
