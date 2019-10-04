@@ -17,19 +17,22 @@ void ProgramFileRandomizer::randomize() {
 
 	srand(time(0)); // random seed based on time
 
-	int totalRuntime = rand() * 1000 + 1; // random value between 1 and 1000
+	// randomly generate total runtime and memory values
+	int totalRuntime = ((rand() % 10) + 1) * 100; // random value between 1 and 1000
+	int memory = ((rand() % 25) + 1) * 5; // random value between 1 and 300
 
-	int memory = rand() * 300 + 1; // random value between 1 and 300
-
+	// open output file
 	ofstream myfile;
 	myfile.open ("example.txt");
+
+	// Assign program file header information
+	myfile << "Name: ProcessName\n";
 	myfile << "Total runtime: " << totalRuntime << "\n";
 	myfile << "Memory: " << memory <<"\n";
 	myfile << "\n";
 
-
+	// randomly generate sequence of instructions
 	int numInstructions = (rand() % 30) + 3; // random value between 3 and 32
-
 	for (int i = 0; i <= numInstructions; i++) {
 
 		int flag = (rand() % 10) + 1; // random value between 1 and 10
@@ -45,6 +48,7 @@ void ProgramFileRandomizer::randomize() {
 		}
 	}
 
+	// end and close file
 	myfile << "EXE";
 	myfile.close();
 }
