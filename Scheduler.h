@@ -1,28 +1,46 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
+#include <string>
+using namespace std;
+
 class Scheduler {
 
 	private:
-		// private variables
+		queue<Process> readyQueue;
+		queue<Process> waitingQueue;
+		queue<Process> exitQueue;
+		list<Process> blockedQueue;
+		Process runningProcess;
 
 	public:
 		// default constructor
 		Scheduler();
 
-		// parameterized constructor
-		Scheduler();
+		// getters
+		queue<Process> getReadyQueue() { return readyQueue; }
+		queue<Process> getWaitingQueue() { return waitingQueue; }
+		queue<Process> getExitQueue() { return exitQueue; }
+		list<Process> blockedQueue() { return blockedQueue; }
+		Process getRunningProcess() { return runningProcess; }
 
+		// setters (need to figure out what i need to be able to set)
+			// here
+			//	and here
+			// 		etc...
 
 		// member functions
-		void firstComeFirstServe();
+		void readProgramFile(string filePath);
 
-		void roundRobin();
+		void addToQueue(queue<Process> queue, int pid);
 
-		int calculatePriority();
+		void removeFromQueue(queue<Process> queue, int pid);
 
-		void readProgramFile();
-
+		// void firstComeFirstServe();
+		//
+		// void roundRobin();
+		//
+		// int calculatePriority();
 };
 
 // how to declare dispatcher object? it should probably inherit scheduler / be a subclass

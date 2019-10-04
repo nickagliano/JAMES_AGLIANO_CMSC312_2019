@@ -1,6 +1,8 @@
 #include <iostream>
 using namespace std;
+#include <string>
 #include "Process.h"
+#include "Scheduler.h"
 #include "ProgramFileRandomizer.h"
 
 // Declare global variables
@@ -11,15 +13,18 @@ using namespace std;
 // ***************************** MAIN *****************************************
 int main(int argc, char**argv) {
 
-	// Sceduler* scheduler = new Scheduler();
+	// // program file generation code
+	// ProgramFileRandomizer* ProgramFileRandomizer = new class ProgramFileRandomizer();
+	//
+	// ProgramFileRandomizer->randomize();
 
 	// Process* testProcess = new Process(1, 2, 3);
 	// testProcess->setProcess(1, 2, 3);
 	// testProcess->printProcess();
 
-	ProgramFileRandomizer* ProgramFileRandomizer = new class ProgramFileRandomizer();
+	Scheduler* Scheduler = new class Scheduler();
 
-	ProgramFileRandomizer->randomize();
+	Scheduler->readProgramFile("programFiles/randomFile1.txt");
 
 
 }

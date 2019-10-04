@@ -1,4 +1,4 @@
-Name: ProcessName
+Name: ProgramName
 Total runtime: 300
 Memory: 20
 

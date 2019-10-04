@@ -7,12 +7,6 @@ using namespace std;
 #include <time.h> // for assisting with random values
 
 
-// Default constructor
-ProgramFileRandomizer::ProgramFileRandomizer() {
-
-}
-
-
 void ProgramFileRandomizer::randomize() {
 
 	srand(time(0)); // random seed based on time
@@ -26,7 +20,7 @@ void ProgramFileRandomizer::randomize() {
 	myfile.open ("example.txt");
 
 	// Assign program file header information
-	myfile << "Name: ProcessName\n";
+	myfile << "Name: ProgramName\n";
 	myfile << "Total runtime: " << totalRuntime << "\n";
 	myfile << "Memory: " << memory <<"\n";
 	myfile << "\n";
@@ -52,17 +46,3 @@ void ProgramFileRandomizer::randomize() {
 	myfile << "EXE";
 	myfile.close();
 }
-
-// Name: Game
-// Total runtime: 300
-// Memory: 45
-//
-// CALCULATE 50
-// CALCULATE 100
-// I/0 30
-// CALCULATE 25
-// I/0 45
-// CALCULATE 75
-// CALCULATE 50
-// I/O 20
-// EXE

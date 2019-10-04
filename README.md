@@ -24,7 +24,6 @@
 
 - Start with first come first serve algorithm, and if functioning, work on round robin
 
-
 ---
 
 # *Main class*
@@ -36,6 +35,9 @@
 
 #### Functions / Methods
 - n/a
+
+#### To-do
+-
 
 ---
 
@@ -49,6 +51,9 @@
 #### Functions / Methods
 - void firstComeFirstServe()
 
+#### To-do
+-
+
 ---
 
 # *Process class*
@@ -59,6 +64,9 @@
 
 #### Functions / Methods
 - n/a
+
+#### To-do
+-
 
 ---
 
@@ -71,4 +79,6 @@
 #### Functions / Methods
 - n/a
 
+#### To-do
+- add process name generator / randomizer
 ---
