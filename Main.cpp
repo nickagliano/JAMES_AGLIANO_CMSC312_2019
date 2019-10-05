@@ -25,5 +25,8 @@ int main(int argc, char**argv) {
 	scheduler->run();
 
 	scheduler->printQueue(scheduler->getReadyQueue());
+	int numProcesses = scheduler->getNumProcesses();
+	cout << "Number of processes: " << numProcesses << endl;
+
 
 }

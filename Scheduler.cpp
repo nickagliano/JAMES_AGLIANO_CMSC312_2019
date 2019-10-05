@@ -17,13 +17,12 @@ Scheduler::Scheduler() {
 	// this->exitQueue = value;
 	// this->blockedQueue = value;
 	// this->runningProcess = value;
-	this->priorityCounter = 0;
 	this->pidCounter = 0;
+	this->numProcesses = 0;
 }
 
 // parameterized constructor
 Scheduler::Scheduler(int algorithm) {
-	this->priorityCounter = 0;
 	this->pidCounter = 0;
 	setAlgorithm(algorithm);
 }
@@ -58,8 +57,8 @@ void Scheduler::readProgramFile(string filePath) {
 					ioValue = stoi(line.substr(4, line.length()-1));
 
 					Process ioProcess;
-					ioProcess.setProcess(generatePid(), 1, calcPriority());
-					// ioProcess.printProcess();
+					ioProcess.setProcess(generatePid(), 1, 0, ioValue);
+					incrementNumProcesses();
 
 					addToQueue(1, ioProcess);
 
@@ -67,8 +66,8 @@ void Scheduler::readProgramFile(string filePath) {
 					calcValue = stoi(line.substr(10, line.length()-1));
 
 					Process calcProcess;
-					calcProcess.setProcess(generatePid(), 1, calcPriority());
-					// calcProcess.printProcess();
+					calcProcess.setProcess(generatePid(), 1, 0, calcValue);
+					incrementNumProcesses();
 
 					addToQueue(1, calcProcess);
 
@@ -111,11 +110,7 @@ void Scheduler::addToQueue(int queue, Process process) {
 	}
 
 }
-//
-// // pass an int corresponding to a queue (readyQueue == 1, waitingQueue == 2, etc.), and which process to REMOVE from that queue
-// void Scheduler::removeFromQueue(queue<Process> queue, int pid) {
-//
-// }
+
 
 // pass queue object you want to print
 void Scheduler::printQueue(queue<Process> q) {
@@ -125,22 +120,6 @@ void Scheduler::printQueue(queue<Process> q) {
 		q.pop();
 	}
 }
-
-
-// calculates a process' priority given based on what algorithm is set to
-int Scheduler::calcPriority() {
-	if (this->algorithm == 0) {
-		int priority = getPriorityCounter();
-		incrementPriorityCounter();
-		return priority;
-
-	} else if (this->algorithm == 1) {
-		return 0;
-	} else {
-		return 0;
-	}
-}
-
 
 // run through processes, using scheduling parameters that were set,
 //	algorithm that was specified, etc.
@@ -152,8 +131,15 @@ void Scheduler::run() {
 		cout << "Prioritizing processes using Round Robin algorithm" << endl;
 	}
 
+	// add funcionality to randomly generate files each run, then read through all of them
 	readProgramFile("programFiles/randomFile1.txt"); // process a program file
-	readProgramFile("programFiles/randomFile2.txt"); // process a program file
+	// readProgramFile("programFiles/randomFile2.txt"); // process a program file
+
+	// while there's still processes that need to be run,
+	firstComeFirstServe(); // schedule processes,
+	// dispatch();
+	// execute x units of process time? (1 clock cycle?)
+	// repeat
 
 }
 
@@ -167,15 +153,25 @@ void Scheduler::setAlgorithm(int algorithm) {
 	}
 }
 
-void Scheduler::incrementPriorityCounter() {
-	this->priorityCounter++;
-}
-
 // generates a unique PID
 int Scheduler::generatePid() {
 	int pid = getPidCounter();
 	this->pidCounter++;
 	return pid;
+}
+
+void Scheduler::setReadyQueue(queue<Process> rq) {
+	this->readyQueue = rq;
+}
+
+void Scheduler::incrementNumProcesses() {
+	this->numProcesses++;
+}
+
+void Scheduler::dispatch() {
+	// choose which process to put on the cpu using priority, and scheduling algorithm specific logic
+	// for now, just find highest priority
+	// cout<<"\nP["<<i+1<<"]"<<"\t\t"<<bt[i]<<"\t\t"<<wt[i]<<"\t\t"<<tat[i];
 }
 
 // ----------------------- SCHEDULING ALGORITHMS ------------------------------
@@ -185,9 +181,32 @@ int Scheduler::generatePid() {
 // 		return int priority value for that process according to when it arrived
 			// in the queue relative to other processes
 void Scheduler::firstComeFirstServe() {
-}
 
+	queue<Process> rq = getReadyQueue();
+	queue<Process> wq = getWaitingQueue();
+
+	queue<Process> tempReadyQueue;
+	int priority = 0;
+
+	while (!rq.empty()) {
+		tempReadyQueue.push(rq.front());
+		rq.pop();
+	}
+
+	while(!tempReadyQueue.empty()) {
+		Process p = tempReadyQueue.front();
+		tempReadyQueue.pop();
+		p.setPriority(priority);
+		priority++;
+		rq.push(p);
+	}
+
+	setReadyQueue(rq);
+}
 
 // round robin scheduling algorithm
 void Scheduler::roundRobin() {
+
+// int tq = 20 // time quantum
+
 }

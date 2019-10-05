@@ -15,8 +15,8 @@ class Scheduler {
 		list<Process> blockedQueue;
 		Process runningProcess;
 		int algorithm;
-		int priorityCounter;
 		int pidCounter;
+		int numProcesses;
 
 	public:
 		// default constructor
@@ -31,8 +31,9 @@ class Scheduler {
 		queue<Process> getExitQueue() { return exitQueue; }
 		list<Process> getBlockedQueue() { return blockedQueue; }
 		Process getRunningProcess() { return runningProcess; }
-		int getPriorityCounter() { return priorityCounter; }
 		int getPidCounter() { return pidCounter; }
+		int getNumProcesses() { return numProcesses; }
+
 
 		// setters (need to figure out what i need to be able to set)
 			// here
@@ -46,7 +47,7 @@ class Scheduler {
 
 		void addToQueue(int queue, Process p);
 
-		void removeFromQueue(int queue, int pid);
+		// void removeFromQueue(int queue, int pid);
 
 		void setAlgorithm(int algorithm);
 
@@ -56,13 +57,17 @@ class Scheduler {
 
 		void roundRobin();
 
-		int calcPriority();
-
 		int generatePid();
 
-		void incrementPriorityCounter();
-
 		void incrementPidCounter();
+
+		void incrementNumProcesses();
+
+		void setReadyQueue(queue<Process> rq);
+
+		void dispatch();
+
+
 
 };
 
