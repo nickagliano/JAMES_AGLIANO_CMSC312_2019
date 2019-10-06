@@ -5,8 +5,8 @@ using namespace std;
 
 // Default constructor
 Process::Process() {
-	setProcess(0, 0, 0, 0);
-	// Scheduler::incrementNumProcesses();
+	setProcess(-1, 0, 0, 0);
+	// Scheduler::incrementNumProcesses(); // add the
 
 }
 
@@ -18,6 +18,8 @@ Process::Process(int pid, int status, int priority, int burstTime) {
 }
 
 // Member functions
+
+// setters
 void Process::setProcess(int pid, int status, int priority, int burstTime) {
 	this->pid = pid;
 	this->status = status;
@@ -33,6 +35,12 @@ void Process::setBurstTime(int bt) {
 	this->burstTime = bt;
 }
 
+void Process::setStatus(int s) {
+	this->status = s;
+}
+
+
+// print
 void Process::printProcess() {
 	cout << "--------------------------------------------------------" << endl;
 	cout << "Pid: " << this->pid << endl;

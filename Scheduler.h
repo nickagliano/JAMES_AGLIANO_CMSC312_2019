@@ -22,8 +22,10 @@ class Scheduler {
 		// default constructor
 		Scheduler();
 
+		// parameterized constructor (choose which algorithm to use)
 		Scheduler(int algorithm);
 
+		// ---------------------- MEMBER FUNCTIONS ----------------------------
 
 		// getters
 		queue<Process> getReadyQueue() { return readyQueue; }
@@ -36,37 +38,26 @@ class Scheduler {
 
 
 		// setters (need to figure out what i need to be able to set)
-			// here
-			//	and here
-			// 		etc...
-
-		// member functions
-		void run();
-
-		void readProgramFile(string filePath);
-
-		void addToQueue(int queue, Process p);
-
-		// void removeFromQueue(int queue, int pid);
-
+		void setExitQueue(queue<Process> eq);
+		void setReadyQueue(queue<Process> rq);
+		void setRunningProcess(Process p);
 		void setAlgorithm(int algorithm);
 
+
+		// utility funcitons
+		void run();
+		void dispatch();
+		void readProgramFile(string filePath);
+		int generatePid();
+		void incrementPidCounter();
+		void incrementNumProcesses();
+		void addToQueue(int queue, Process p);
+		// void removeFromQueue(int queue, int pid);
 		void printQueue(queue<Process> queue);
 
+		// scheduling algorithms
 		void firstComeFirstServe();
-
 		void roundRobin();
-
-		int generatePid();
-
-		void incrementPidCounter();
-
-		void incrementNumProcesses();
-
-		void setReadyQueue(queue<Process> rq);
-
-		void dispatch();
-
 
 
 };

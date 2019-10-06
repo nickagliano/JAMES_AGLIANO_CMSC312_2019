@@ -37,7 +37,7 @@
 - n/a
 
 #### To-do
--
+- n/a
 
 ---
 
@@ -45,18 +45,32 @@
 - the scheduler of the OS
 
 #### Subclasses
-- Dispatcher
-- Clock
+- n/a
+
 
 #### Functions / Methods
-- void firstComeFirstServe()
+- n/a
+
+#### To-do
+- n/a
+
+---
+
+# *Process class*
+
+#### Subclasses
+- n/a
+-
+
+#### Functions / Methods
+- n/a
 
 #### To-do
 -
 
 ---
 
-# *Process class*
+# *Clock class*
 
 #### Subclasses
 - n/a

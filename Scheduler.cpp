@@ -27,6 +27,35 @@ Scheduler::Scheduler(int algorithm) {
 	setAlgorithm(algorithm);
 }
 
+// ----------------------------------------------------------------------------
+
+// setters
+
+void Scheduler::setReadyQueue(queue<Process> rq) {
+	this->readyQueue = rq;
+}
+
+void Scheduler::setExitQueue(queue<Process> eq) {
+	this->exitQueue = eq;
+}
+
+void Scheduler::setRunningProcess(Process p) {
+	this->runningProcess = p;
+}
+
+// set which algorithm will be used by the scheduler
+void Scheduler::setAlgorithm(int algorithm) {
+	if (algorithm == 0) {
+		this->algorithm = 0;
+	} else if (algorithm == 1) {
+		this->algorithm = 1;
+	}
+}
+
+
+// ----------------------------------------------------------------------------
+
+// utility functions
 
 void Scheduler::readProgramFile(string filePath) {
 
@@ -88,6 +117,95 @@ void Scheduler::readProgramFile(string filePath) {
 	// cout << "The last I/O process value: " << ioValue << "\n" << endl;
 }
 
+// choose which process to put on the cpu using priority and logic specific to the scheduling algorithm
+void Scheduler::dispatch() {
+	Process runningProcess = getRunningProcess();
+	queue<Process> rq = getReadyQueue();
+
+
+	int highestPriority = INT_MAX;
+	size_t size = rq.size();
+
+	// find index of highest priority process
+	while (size-- > 0) {
+		Process p = rq.front();
+		rq.pop();
+		rq.push(p);
+		if (p.getPriority() < highestPriority) {
+			highestPriority = p.getPriority();
+		}
+	}
+
+	size = rq.size();
+
+	// process the highest priority process
+	while (size-- > 0) {
+		Process p = rq.front();
+		if (p.getPriority() == highestPriority) {
+			rq.pop();
+			if (runningProcess.getPid() != -1) {
+				runningProcess.setStatus(4); // change status of process to 4 (terminated)
+				addToQueue(4, runningProcess);
+			}
+			p.setStatus(3); // set status of highest priority process to 3 (running)
+			setRunningProcess(p); // add highest priority process to CPU
+		} else {
+			rq.pop();
+			rq.push(p);
+		}
+	}
+
+	setReadyQueue(rq);
+}
+
+// generates a unique PID
+int Scheduler::generatePid() {
+	int pid = getPidCounter();
+	this->pidCounter++;
+	return pid;
+}
+
+// run through processes, using scheduling parameters that were set,
+//	algorithm that was specified, etc.
+void Scheduler::run() {
+	cout << "Starting scheduler!!" << endl;
+	if (algorithm == 0) {
+		cout << "Prioritizing processes using First Come First Serve algorithm" << endl;
+	} else if (algorithm == 1) {
+		cout << "Prioritizing processes using Round Robin algorithm" << endl;
+	}
+
+	// add funcionality to randomly generate files each run, then read through all of them
+	readProgramFile("programFiles/randomFile1.txt"); // process a program file
+	// readProgramFile("programFiles/randomFile2.txt"); // process a program file
+
+
+	bool runFlag = true;
+	while (runFlag) { // while loop runs until every process has been executed
+		firstComeFirstServe(); // schedule processes,
+		dispatch(); // remove/add process to cpu depending on scheduling alogorithm
+
+		Process rp = getRunningProcess();
+
+		if (getReadyQueue().empty() && getWaitingQueue().empty()) { // end condition (will need to tweak later)
+			runFlag = false;
+		}
+	}
+}
+
+void Scheduler::incrementNumProcesses() {
+	this->numProcesses++;
+}
+
+// pass queue object you want to print
+void Scheduler::printQueue(queue<Process> q) {
+	//printing content of queue
+	while (!q.empty()) {
+		q.front().printProcess();
+		q.pop();
+	}
+}
+
 // pass an int corresponding to a queue (readyQueue == 1, waitingQueue == 2, etc.), and which process to ADD to that queue
 void Scheduler::addToQueue(int queue, Process process) {
 
@@ -108,71 +226,8 @@ void Scheduler::addToQueue(int queue, Process process) {
 	} else if (queue == 5) { // blockedQueue / list?
 
 	}
-
 }
 
-
-// pass queue object you want to print
-void Scheduler::printQueue(queue<Process> q) {
-	//printing content of queue
-	while (!q.empty()) {
-		q.front().printProcess();
-		q.pop();
-	}
-}
-
-// run through processes, using scheduling parameters that were set,
-//	algorithm that was specified, etc.
-void Scheduler::run() {
-	cout << "Starting scheduler!!" << endl;
-	if (algorithm == 0) {
-		cout << "Prioritizing processes using First Come First Serve algorithm" << endl;
-	} else if (algorithm == 1) {
-		cout << "Prioritizing processes using Round Robin algorithm" << endl;
-	}
-
-	// add funcionality to randomly generate files each run, then read through all of them
-	readProgramFile("programFiles/randomFile1.txt"); // process a program file
-	// readProgramFile("programFiles/randomFile2.txt"); // process a program file
-
-	// while there's still processes that need to be run,
-	firstComeFirstServe(); // schedule processes,
-	// dispatch();
-	// execute x units of process time? (1 clock cycle?)
-	// repeat
-
-}
-
-
-// set which algorithm will be used by the scheduler
-void Scheduler::setAlgorithm(int algorithm) {
-	if (algorithm == 0) {
-		this->algorithm = 0;
-	} else if (algorithm == 1) {
-		this->algorithm = 1;
-	}
-}
-
-// generates a unique PID
-int Scheduler::generatePid() {
-	int pid = getPidCounter();
-	this->pidCounter++;
-	return pid;
-}
-
-void Scheduler::setReadyQueue(queue<Process> rq) {
-	this->readyQueue = rq;
-}
-
-void Scheduler::incrementNumProcesses() {
-	this->numProcesses++;
-}
-
-void Scheduler::dispatch() {
-	// choose which process to put on the cpu using priority, and scheduling algorithm specific logic
-	// for now, just find highest priority
-	// cout<<"\nP["<<i+1<<"]"<<"\t\t"<<bt[i]<<"\t\t"<<wt[i]<<"\t\t"<<tat[i];
-}
 
 // ----------------------- SCHEDULING ALGORITHMS ------------------------------
 
