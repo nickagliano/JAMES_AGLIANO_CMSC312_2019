@@ -19,8 +19,14 @@ int main(int argc, char**argv) {
 	//
 	// ProgramFileRandomizer->randomize();
 
-	Scheduler* scheduler = new class Scheduler(0); // declare scheduler, use firstComeFirstServe algorithm
+
+	// Scheduler* scheduler = new class Scheduler(0); // declare scheduler, use firstComeFirstServe algorithm
+
+	Scheduler* scheduler = new class Scheduler(1); // declare scheduler, use firstComeFirstServe algorithm
+
 
 	scheduler->run();
+
+	scheduler->printQueue(scheduler->getExitQueue());
 
 }

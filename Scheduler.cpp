@@ -179,18 +179,25 @@ void Scheduler::run() {
 	readProgramFile("programFiles/randomFile1.txt"); // process a program file
 	// readProgramFile("programFiles/randomFile2.txt"); // process a program file
 
+	if (algorithm == 0) {
+		bool runFlag = true;
+		while (runFlag) { // while loop runs until every process has been executed
+			firstComeFirstServe(); // schedule processes,
+			dispatch(); // remove/add process to cpu depending on scheduling alogorithm
 
-	bool runFlag = true;
-	while (runFlag) { // while loop runs until every process has been executed
-		firstComeFirstServe(); // schedule processes,
-		dispatch(); // remove/add process to cpu depending on scheduling alogorithm
+			Process rp = getRunningProcess();
 
-		Process rp = getRunningProcess();
-
-		if (getReadyQueue().empty() && getWaitingQueue().empty()) { // end condition (will need to tweak later)
-			runFlag = false;
+			if (getReadyQueue().empty() && getWaitingQueue().empty()) { // end condition (will need to tweak later)
+				runFlag = false;
+			}
 		}
+	} else if (algorithm == 1) {
+		roundRobin();
 	}
+
+
+
+
 }
 
 void Scheduler::incrementNumProcesses() {
@@ -262,6 +269,39 @@ void Scheduler::firstComeFirstServe() {
 // round robin scheduling algorithm
 void Scheduler::roundRobin() {
 
-// int tq = 20 // time quantum
+	int tq = 20; // time quantum
 
+	bool done = false;
+	while (!done) {
+
+		queue<Process> rq = getReadyQueue();
+		size_t size = rq.size(); // size of ready queue
+
+		while (size-- > 0) {
+			Process p = rq.front(); // get first process in queue
+			p.printProcess();
+			p.setStatus(3); // set process status as running
+			setRunningProcess(p); // set as running process
+			int bt = p.getBurstTime(); // get burst time
+
+			if (p.getBurstTime() > tq) { // if the burstTime is longer than the time quantum
+				p.setBurstTime(bt-20); // take time quantum length of time off of the burst time
+				rq.pop(); // remove from queue, and...
+				p.setStatus(1); // set status back to ready and...
+				rq.push(p); // add to the end of queue
+			} else {
+				rq.pop(); // remove from queue
+				p.setBurstTime(0); // set burstTime to 0
+				p.setStatus(4); // set status of process to terminated
+				addToQueue(4, p); // add process to exit queue
+			}
+		}
+
+		// reassess size of queue
+		size = rq.size();
+		if (size == 0) done = true;
+
+		setReadyQueue(rq);
+
+	}
 }
