@@ -42,7 +42,7 @@ void Process::setStatus(int s) {
 
 // print
 void Process::printProcess() {
-	cout << "--------------------------------------------------------" << endl;
+	// cout << "--------------------------------------------------------" << endl;
 	cout << "Pid: " << this->pid << endl;
 	cout << "Status: " << this->status << endl;
 	cout << "Priority:" << this->priority << endl;

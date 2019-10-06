@@ -24,9 +24,8 @@ int main(int argc, char**argv) {
 
 	Scheduler* scheduler = new class Scheduler(1); // declare scheduler, use firstComeFirstServe algorithm
 
-
 	scheduler->run();
 
-	scheduler->printQueue(scheduler->getExitQueue());
+	// scheduler->printQueue(scheduler->getExitQueue());
 
 }

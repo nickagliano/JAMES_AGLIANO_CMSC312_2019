@@ -194,10 +194,6 @@ void Scheduler::run() {
 	} else if (algorithm == 1) {
 		roundRobin();
 	}
-
-
-
-
 }
 
 void Scheduler::incrementNumProcesses() {
@@ -239,9 +235,6 @@ void Scheduler::addToQueue(int queue, Process process) {
 // ----------------------- SCHEDULING ALGORITHMS ------------------------------
 
 // first come first serve scheduling algorithm
-// 	input a process,
-// 		return int priority value for that process according to when it arrived
-			// in the queue relative to other processes
 void Scheduler::firstComeFirstServe() {
 
 	queue<Process> rq = getReadyQueue();
@@ -279,17 +272,19 @@ void Scheduler::roundRobin() {
 
 		while (size-- > 0) {
 			Process p = rq.front(); // get first process in queue
-			p.printProcess();
 			p.setStatus(3); // set process status as running
 			setRunningProcess(p); // set as running process
 			int bt = p.getBurstTime(); // get burst time
-
 			if (p.getBurstTime() > tq) { // if the burstTime is longer than the time quantum
+				cout << "Process is running with burst time longer than time quantum, it will be put back on the queue" << endl;
+				p.printProcess();
 				p.setBurstTime(bt-20); // take time quantum length of time off of the burst time
 				rq.pop(); // remove from queue, and...
 				p.setStatus(1); // set status back to ready and...
 				rq.push(p); // add to the end of queue
 			} else {
+				cout << "Process is running and will finish execution during this time quantum!! Congrats!!!" << endl;
+				p.printProcess();
 				rq.pop(); // remove from queue
 				p.setBurstTime(0); // set burstTime to 0
 				p.setStatus(4); // set status of process to terminated
@@ -299,9 +294,8 @@ void Scheduler::roundRobin() {
 
 		// reassess size of queue
 		size = rq.size();
-		if (size == 0) done = true;
+		if (size == 0) done = true; // if the queue is empty, stop
 
-		setReadyQueue(rq);
-
+		setReadyQueue(rq); // push the changes from the current iteration to the 'real' readyqueue
 	}
 }

@@ -52,7 +52,7 @@
 - n/a
 
 #### To-do
-- n/a
+- fix firstComeFirstServe() so that it is doing everything it needs to do within it's own scope/container, not in the run() method
 
 ---
 
@@ -60,7 +60,6 @@
 
 #### Subclasses
 - n/a
--
 
 #### Functions / Methods
 - n/a
