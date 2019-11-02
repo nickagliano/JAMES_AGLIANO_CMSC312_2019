@@ -62,13 +62,4 @@ class Scheduler {
 
 };
 
-// Dispatcher object
-// class Dispatcher : public Scheduler {
-//
-// 	private:
-//
-// 	public:
-// };
-
-
 #endif

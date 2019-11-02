@@ -2,8 +2,10 @@
 using namespace std;
 #include <string>
 #include <queue>
-#include "Process.h"
-#include "Scheduler.h"
+#include "ProcessManagement/Process.h"
+#include "ProcessManagement/Scheduler.h"
+#include "MemoryManagement/MainMemory.h"
+#include "MemoryManagement/Scheduler.h"
 // #include "ProgramFileRandomizer.h"
 
 // Declare global variables
@@ -20,9 +22,19 @@ int main(int argc, char**argv) {
 	// ProgramFileRandomizer->randomize();
 
 
-	// Scheduler* scheduler = new class Scheduler(0); // declare scheduler, use firstComeFirstServe algorithm
 
-	Scheduler* scheduler = new class Scheduler(1); // declare scheduler, use firstComeFirstServe algorithm
+	Clock clock = new class Clock();
+
+	// Scheduler* scheduler = new class Scheduler(0); // declare scheduler, use firstComeFirstServe algorithm
+	Scheduler* scheduler = new class Scheduler(1); // declare scheduler, use RR algorithm
+
+	MainMemory ram = new class MainMemory();
+
+
+	while (1) {
+		
+
+	}
 
 	scheduler->run();
 

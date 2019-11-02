@@ -46,9 +46,9 @@ void Scheduler::setRunningProcess(Process p) {
 // set which algorithm will be used by the scheduler
 void Scheduler::setAlgorithm(int algorithm) {
 	if (algorithm == 0) {
-		this->algorithm = 0;
+		this->algorithm = 0; // fcfs
 	} else if (algorithm == 1) {
-		this->algorithm = 1;
+		this->algorithm = 1; // round robin
 	}
 }
 
@@ -86,7 +86,7 @@ void Scheduler::readProgramFile(string filePath) {
 					ioValue = stoi(line.substr(4, line.length()-1));
 
 					Process ioProcess;
-					ioProcess.setProcess(generatePid(), 1, 0, ioValue);
+					ioProcess.setProcess(generatePid(), 1, 0, ioValue, 1);
 					incrementNumProcesses();
 
 					addToQueue(1, ioProcess);
@@ -95,7 +95,7 @@ void Scheduler::readProgramFile(string filePath) {
 					calcValue = stoi(line.substr(10, line.length()-1));
 
 					Process calcProcess;
-					calcProcess.setProcess(generatePid(), 1, 0, calcValue);
+					calcProcess.setProcess(generatePid(), 1, 0, calcValue, 0);
 					incrementNumProcesses();
 
 					addToQueue(1, calcProcess);
@@ -232,6 +232,25 @@ void Scheduler::addToQueue(int queue, Process process) {
 }
 
 
+void Scheduler::step() {
+	if (algorithm == 0) {
+		bool runFlag = true;
+		while (runFlag) { // while loop runs until every process has been executed
+			firstComeFirstServe(); // schedule processes,
+			dispatch(); // remove/add process to cpu depending on scheduling alogorithm
+
+			Process rp = getRunningProcess();
+
+			if (getReadyQueue().empty() && getWaitingQueue().empty()) { // end condition (will need to tweak later)
+				runFlag = false;
+			}
+		}
+	} else if (algorithm == 1) {
+		roundRobinStep();
+	}
+}
+
+
 // ----------------------- SCHEDULING ALGORITHMS ------------------------------
 
 // first come first serve scheduling algorithm
@@ -258,6 +277,37 @@ void Scheduler::firstComeFirstServe() {
 
 	setReadyQueue(rq);
 }
+
+
+void Scheduler::roundRobinStep() {
+
+	int tq = 20; // time quantum
+
+	q = getReadyQueue();
+
+	Process p = rq.front(); // get first process in queue
+	p.setStatus(3); // set process status as running
+	setRunningProcess(p); // set as running process
+	int bt = p.getBurstTime(); // get burst time
+
+	if (p.getBurstTime() > tq) { // if the burstTime is longer than the time quantum
+		cout << "Process is running with burst time longer than time quantum, it will be put back on the queue" << endl;
+		p.printProcess();
+		p.setBurstTime(bt-20); // take time quantum length of time off of the burst time
+		rq.pop(); // remove from queue, and...
+		p.setStatus(1); // set status back to ready and...
+		rq.push(p); // add to the end of queue
+	} else {
+		cout << "Process is running and will finish execution during this time quantum!! Congrats!!!" << endl;
+		p.printProcess();
+		rq.pop(); // remove from queue
+		p.setBurstTime(0); // set burstTime to 0
+		p.setStatus(4); // set status of process to terminated
+		addToQueue(4, p); // add process to exit queue
+	}
+
+}
+
 
 // round robin scheduling algorithm
 void Scheduler::roundRobin() {
