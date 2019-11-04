@@ -3,14 +3,15 @@
 
 #include <string>
 #include <queue>
+#include "../ProcessManagement/Process.h"
 #include <list>
 using namespace std;
 
 class MainMemory {
 
 	private:
-		int size = 4096; // main memory size set to 4096 MB
-		int frameSize = 16;
+		const static int size = 4096; // main memory size set to 4096 MB
+		const static int frameSize = 16;
 		int freeSpace;
 		int kernelAddressSpace;
 		int userAddressSpace;
@@ -22,6 +23,7 @@ class MainMemory {
 		MainMemory();
 
 		// no parameterized constructor needed
+
 
 		// ---------------------- MEMBER FUNCTIONS ----------------------------
 

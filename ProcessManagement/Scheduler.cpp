@@ -7,7 +7,7 @@ using namespace std;
 
 #include "Process.h"
 #include "Scheduler.h"
-// #include "Clock.h"
+#include "../MemoryManagement/MainMemory.h"
 
 
 // Default constructor
@@ -52,6 +52,9 @@ void Scheduler::setAlgorithm(int algorithm) {
 	}
 }
 
+void Scheduler::setMainMemory(MainMemory* ram) {
+	this->ram = ram;
+}
 
 // ----------------------------------------------------------------------------
 
@@ -82,6 +85,12 @@ void Scheduler::readProgramFile(string filePath) {
 				} else if (line.substr(0, 3).compare("Mem") == 0) { // memory
 					memory = line.substr(8, line.length()-1);
 
+				} else if (line.substr(0, 3).compare("YIE") == 0) { // yield
+					// handle yield command
+
+				} else if (line.substr(0, 3).compare("OUT") == 0) { // out
+					// handle out command
+
 				} else if (line.substr(0, 3).compare("I/O") == 0) { // an i/o process
 					ioValue = stoi(line.substr(4, line.length()-1));
 
@@ -95,7 +104,7 @@ void Scheduler::readProgramFile(string filePath) {
 					calcValue = stoi(line.substr(10, line.length()-1));
 
 					Process calcProcess;
-					calcProcess.setProcess(generatePid(), 1, 0, calcValue, 0);
+					calcProcess.setProcess(generatePid(), 1, 0, calcValue, 0); // generate PID, set status to ready,
 					incrementNumProcesses();
 
 					addToQueue(1, calcProcess);
@@ -109,12 +118,6 @@ void Scheduler::readProgramFile(string filePath) {
 	} else {
 		cout << "Unable to open file";
 	}
-
-	// cout << "The program name: " << programName << "\n" << endl;
-	// cout << "The total runtime: " << totalRuntime << "\n" << endl;
-	// cout << "The memory: " << memory << "\n" << endl;
-	// cout << "The last calc process value: " << calcValue << "\n" << endl;
-	// cout << "The last I/O process value: " << ioValue << "\n" << endl;
 }
 
 // choose which process to put on the cpu using priority and logic specific to the scheduling algorithm
@@ -175,10 +178,6 @@ void Scheduler::run() {
 		cout << "Prioritizing processes using Round Robin algorithm" << endl;
 	}
 
-	// add funcionality to randomly generate files each run, then read through all of them
-	readProgramFile("programFiles/randomFile1.txt"); // process a program file
-	// readProgramFile("programFiles/randomFile2.txt"); // process a program file
-
 	if (algorithm == 0) {
 		bool runFlag = true;
 		while (runFlag) { // while loop runs until every process has been executed
@@ -233,6 +232,16 @@ void Scheduler::addToQueue(int queue, Process process) {
 
 
 void Scheduler::step() {
+
+	// check if there's a new file input, or some type of interrupt
+	//	if so, check if the running process can be interrupted
+	//	if it can, interrupt it
+	// 	if it can't (maybe it's I/O process, or in critical section), then wait
+
+	// 	check if there's a currently running process (status 3)
+	//		if no running process, pull next process according to scheduling algorithm
+	//		if there is, continue processing it according to scheduling algorithm
+
 	if (algorithm == 0) {
 		bool runFlag = true;
 		while (runFlag) { // while loop runs until every process has been executed
@@ -246,6 +255,7 @@ void Scheduler::step() {
 			}
 		}
 	} else if (algorithm == 1) {
+		cout << "Using round robin step" << endl;
 		roundRobinStep();
 	}
 }
@@ -283,7 +293,7 @@ void Scheduler::roundRobinStep() {
 
 	int tq = 20; // time quantum
 
-	q = getReadyQueue();
+	queue<Process> rq = getReadyQueue();
 
 	Process p = rq.front(); // get first process in queue
 	p.setStatus(3); // set process status as running
@@ -305,6 +315,8 @@ void Scheduler::roundRobinStep() {
 		p.setStatus(4); // set status of process to terminated
 		addToQueue(4, p); // add process to exit queue
 	}
+
+	setReadyQueue(rq); // push the changes from the current iteration to the 'real' readyqueue
 
 }
 

@@ -4,6 +4,7 @@
 #include <string>
 #include <queue>
 #include <list>
+#include "../MemoryManagement/MainMemory.h"
 using namespace std;
 
 class Scheduler {
@@ -17,6 +18,7 @@ class Scheduler {
 		int algorithm;
 		int pidCounter;
 		int numProcesses;
+		MainMemory* ram;
 
 	public:
 		// default constructor
@@ -35,6 +37,7 @@ class Scheduler {
 		Process getRunningProcess() { return runningProcess; }
 		int getPidCounter() { return pidCounter; }
 		int getNumProcesses() { return numProcesses; }
+		int getMainMemory() { return ram; }
 
 
 		// setters (need to figure out what i need to be able to set)
@@ -42,10 +45,11 @@ class Scheduler {
 		void setReadyQueue(queue<Process> rq);
 		void setRunningProcess(Process p);
 		void setAlgorithm(int algorithm);
-
+		void setMainMemory(MainMemory* ram);
 
 		// utility funcitons
 		void run();
+		void step();
 		void dispatch();
 		void readProgramFile(string filePath);
 		int generatePid();
@@ -58,6 +62,7 @@ class Scheduler {
 		// scheduling algorithms
 		void firstComeFirstServe();
 		void roundRobin();
+		void roundRobinStep();
 
 
 };

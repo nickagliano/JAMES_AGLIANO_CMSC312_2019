@@ -5,14 +5,13 @@ using namespace std;
 
 // Default constructor
 Process::Process() {
-	setProcess(-1, 0, 0, 0);
+	setProcess(-1, 0, 0, 0, 0);
 	// Scheduler::incrementNumProcesses(); // add the
-
 }
 
 // Constructor
-Process::Process(int pid, int status, int priority, int burstTime) {
-	setProcess(pid, status, priority, burstTime);
+Process::Process(int pid, int status, int priority, int burstTime, int type) {
+	setProcess(pid, status, priority, burstTime, type);
 	// Scheduler::incrementNumProcesses();
 	// this->arrivalTime = setArrivalTime(); // set arrivalTime using current time returned by clock class
 }
@@ -20,11 +19,12 @@ Process::Process(int pid, int status, int priority, int burstTime) {
 // Member functions
 
 // setters
-void Process::setProcess(int pid, int status, int priority, int burstTime) {
+void Process::setProcess(int pid, int status, int priority, int burstTime, int type) {
 	this->pid = pid;
 	this->status = status;
 	this->priority = priority;
 	this->burstTime = burstTime;
+	this->type = type;
 }
 
 void Process::setPriority(int priority) {

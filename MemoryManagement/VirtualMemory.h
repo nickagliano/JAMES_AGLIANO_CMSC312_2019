@@ -9,8 +9,8 @@ using namespace std;
 class VirtualMemory {
 
 	private:
-		int size = 4096; // main memory size set to 4096 MB
-		int pageSize;
+		const static int size = 4096; // main memory size set to 4096 MB
+		const static int pageSize = 16;
 		int freeSpace;
 		list<Process> processList;
 

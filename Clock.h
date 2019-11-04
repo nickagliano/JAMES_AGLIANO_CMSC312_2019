@@ -17,6 +17,7 @@ class Clock {
 
 		void start();
 		void stop();
+		void step();
 
 };
 

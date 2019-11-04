@@ -1,6 +1,6 @@
 #include "Clock.h"
-#include "Process.h"
-#include "Scheduler.h"
+#include "ProcessManagement/Process.h"
+#include "ProcessManagement/Scheduler.h"
 
 #include <iostream>
 using namespace std;
@@ -16,4 +16,8 @@ void Clock::start() {
 
 void Clock::stop() {
 
+}
+
+void Clock::step() {
+	this->time++;
 }
