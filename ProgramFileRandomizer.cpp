@@ -7,13 +7,15 @@ using namespace std;
 #include <time.h> // for assisting with random values
 
 
+// need to add critical section to randomizer
 void ProgramFileRandomizer::randomize() {
 
 	srand(time(0)); // random seed based on time
 
 	// randomly generate total runtime and memory values
 	int totalRuntime = ((rand() % 10) + 1) * 100; // random value between 1 and 1000
-	int memory = ((rand() % 25) + 1) * 5; // random value between 1 and 300
+	int numInstructions = (rand() % 30) + 3; // random value between 3 and 32
+	int memory = (numInstructions * 5) + 5; // each instruction is 5 memory, + exe instruction is another 5
 
 	// open output file
 	ofstream myfile;
@@ -26,7 +28,7 @@ void ProgramFileRandomizer::randomize() {
 	myfile << "\n";
 
 	// randomly generate sequence of instructions
-	int numInstructions = (rand() % 30) + 3; // random value between 3 and 32
+
 	for (int i = 0; i <= numInstructions; i++) {
 
 		int flag = (rand() % 10) + 1; // random value between 1 and 10

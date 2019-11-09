@@ -1,6 +1,6 @@
 Name: ProgramName3
 Total runtime: 300
-Memory: 20
+Memory: 115
 
 I/O 85
 I/O 30

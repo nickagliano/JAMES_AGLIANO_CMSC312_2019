@@ -21,7 +21,7 @@ Process::Process(int pid, int status, int priority, int burstTime, int type) {
 // setters
 void Process::setProcess(int pid, int status, int priority, int burstTime) {
 	this->pid = pid; // unique process identifier
-	this->pc = pc; // Program counter, (for this simulation represents which "instruction" the process is currently on)
+	this->pc = pc; // Program counter, (for this simulation represents which command process is currently on)
 	this->status = status;
 	this->priority = priority;
 	this->burstTime = burstTime;

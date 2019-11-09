@@ -1,6 +1,6 @@
 Name: ProgramName4
 Total runtime: 400
-Memory: 60
+Memory: 65
 
 CALCULATE 95
 CALCULATE 95

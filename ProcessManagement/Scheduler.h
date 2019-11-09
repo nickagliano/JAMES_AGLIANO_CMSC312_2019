@@ -37,7 +37,7 @@ class Scheduler {
 		Process getRunningProcess() { return runningProcess; }
 		int getPidCounter() { return pidCounter; }
 		int getNumProcesses() { return numProcesses; }
-		int getMainMemory() { return ram; }
+		MainMemory* getMainMemory() { return ram; }
 
 
 		// setters (need to figure out what i need to be able to set)

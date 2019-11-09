@@ -4,6 +4,7 @@
 #include <string>
 #include <queue>
 #include "../ProcessManagement/Process.h"
+#include "../MemoryManagement/Frame.h"
 #include <list>
 using namespace std;
 
@@ -12,10 +13,12 @@ class MainMemory {
 	private:
 		const static int size = 4096; // main memory size set to 4096 MB
 		const static int frameSize = 16;
-		int freeSpace;
-		int kernelAddressSpace;
-		int userAddressSpace;
-		list<Process> processList;
+		const static int numFrames = 256; // total number of frames in main memory
+		int numFreeFrames; // number of currently free frames
+		int kernelAddressSpace; // marks end of kernal address space
+		int userAddressSpace; // marks start of user address space
+		Frame frameArray[numFrames];
+		list<Frame> freeFrameList; // list of free frames
 
 
 	public:
@@ -28,22 +31,21 @@ class MainMemory {
 		// ---------------------- MEMBER FUNCTIONS ----------------------------
 
 		// getters
-		int getFreeSpace() { return freeSpace; }
+		int getNumFreeFrames() { return numFreeFrames; }
 		int getSize() { return size; }
-		list<Process> getProcessList() { return processList; }
+		Frame getFrame(int n); // get frame at that index
 
 
 		// setters
-		void setFreeSpace(int size);
-
+		void setNumFreeFrames(int num);
+		void setFrame(int n, Frame f); // pass index and new frame for that position
 
 		// utility funcitons
-		void printProcessList();
-		list<Process> addToProcessList(Process process);
-		list<Process> removeFromProcessList(Process process);
-		int findFirstFit(Process process); // find first fit in memory for a process
-		int findBestFit(Process process); // find best fit in memory for a process
+		int findFirstFit(Process process); // find frame using first fit method for a page
+		int findBestFit(Process process); // find frame using best fit for a page
 		void shuffle(); // to reduce external fragmentation
+		
+		void printFreeFrames(); // for testing
 
 };
 

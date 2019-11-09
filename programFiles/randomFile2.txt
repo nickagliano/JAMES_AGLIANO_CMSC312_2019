@@ -1,6 +1,6 @@
 Name: ProgramName2
 Total runtime: 500
-Memory: 50
+Memory: 115
 
 CALCULATE 25
 CALCULATE 30

@@ -23,7 +23,7 @@ int main(int argc, char**argv) {
 
 	// Declaration of OS components
 
-	Clock* clock = new class Clock(); // clock
+	// Clock* clock = new class Clock(); // clock
 
 	// Memory management
 	MainMemory* ram = new class MainMemory(); // main memory / physical memory / RAM
@@ -32,28 +32,28 @@ int main(int argc, char**argv) {
 
 	// Process management
 	// Scheduler* scheduler = new class Scheduler(0); // declare scheduler, use firstComeFirstServe algorithm
-	Scheduler* scheduler = new class Scheduler(1); // declare scheduler, use RR algorithm
-	scheduler->setMainMemory(ram); // pass main memory to scheduler
+	// Scheduler* scheduler = new class Scheduler(1); // declare scheduler, use RR algorithm
+	// scheduler->setMainMemory(ram); // pass main memory to scheduler
 
 	// ************************************************************************
 
 	scheduler->readProgramFile("programFiles/randomFile1.txt"); // process a program file
 
 	// where steps / loop cycles are run
-	while (1) {
+	// while (1) {
+	//
+	// 	if (scheduler->getReadyQueue().size() > 0) {
+	// 		scheduler->step();
+	// 		clock->step(); // increment clock by 1 loop cycle
+	// 		cout << clock->getTime() << endl;
+	// 	} else {
+	// 		cout << "Nothing in ready queue" << endl;
+	// 		cout << "Finished in: " << clock->getTime() << " loop cycles."<< endl;
+	//
+	// 		break;
+	// 	}
 
-		if (scheduler->getReadyQueue().size() > 0) {
-			scheduler->step();
-			clock->step(); // increment clock by 1 loop cycle
-			cout << clock->getTime() << endl;
-		} else {
-			cout << "Nothing in ready queue" << endl;
-			cout << "Finished in: " << clock->getTime() << " loop cycles."<< endl;
-
-			break;
-		}
-
-	}
+	// }
 
 	// scheduler->run();
 

@@ -3,6 +3,7 @@
 #include <string>
 #include <queue>
 #include <list>
+#include <math.h>
 using namespace std;
 
 #include "Process.h"
@@ -69,6 +70,8 @@ void Scheduler::readProgramFile(string filePath) {
 	int calcValue;
 	int ioValue;
 
+	int pid = generatePid();
+
 	ifstream myfile (filePath);
 
 	if (myfile.is_open()) {
@@ -85,6 +88,18 @@ void Scheduler::readProgramFile(string filePath) {
 				} else if (line.substr(0, 3).compare("Mem") == 0) { // memory
 					memory = line.substr(8, line.length()-1);
 
+					int numPagesNeeded = ceil(memory / 16); // number of pages needed to hold process
+
+					MainMemory* ram = getMainMemory;
+
+					if (ram.getNumFreeFrames() < memory) {
+						// cannot load into memory
+						cout << "Process could not be loaded into memory because process size: " << memory << " MB is greater than free memory: " << ram.getFreeSpace() << " GB." << endl;
+						break;
+					} else {
+						// setProcess
+					}
+
 				} else if (line.substr(0, 3).compare("YIE") == 0) { // yield
 					// handle yield command
 
@@ -93,9 +108,8 @@ void Scheduler::readProgramFile(string filePath) {
 
 				} else if (line.substr(0, 3).compare("I/O") == 0) { // an i/o process
 					ioValue = stoi(line.substr(4, line.length()-1));
-
 					Process ioProcess;
-					ioProcess.setProcess(generatePid(), 1, 0, ioValue, 1);
+					ioProcess.setProcess(pid, 1, 0, ioValue, 1);
 					incrementNumProcesses();
 
 					addToQueue(1, ioProcess);
@@ -104,7 +118,7 @@ void Scheduler::readProgramFile(string filePath) {
 					calcValue = stoi(line.substr(10, line.length()-1));
 
 					Process calcProcess;
-					calcProcess.setProcess(generatePid(), 1, 0, calcValue, 0); // generate PID, set status to ready,
+					calcProcess.setProcess(pid, 1, 0, calcValue, 0); // generate PID, set status to ready,
 					incrementNumProcesses();
 
 					addToQueue(1, calcProcess);
