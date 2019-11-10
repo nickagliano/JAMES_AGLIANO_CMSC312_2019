@@ -10,16 +10,16 @@ class Process {
 	private:
 		// Process attributes (virtual PCB)
 		int pid;
-		int memory; // how much memory process takes up
+		int pc; // program counter
 		int numPages; // how many pages the process takes up
-		int arrivalTime;
+		int arrivalTime; // when the process was brought into memory
 		int status; // 0, 1, 2, 3, 4 == new, ready, waiting, running, terminated
-		int priority;
+		int priority; // 0 is highest
 		PageTable* pageTable; // maps logical memory to physical memory
 
 	public:
 		Process();
-		Process(int pid, int status, int priority, int burstTime, int type);
+		Process(int pid, int status, int priority);
 
 		// getters
 		int getPid() { return pid; }
@@ -27,6 +27,7 @@ class Process {
 		int getPriority()  { return priority; }
 		int getArrivalTime()  { return arrivalTime; }
 		int getNumPages()  { return numPages; }
+		PageTable* getPageTabe() { return pageTable; }
 
 		// setters
 		void setProcess(int pid, int status, int priority);

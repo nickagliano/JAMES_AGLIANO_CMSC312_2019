@@ -5,13 +5,13 @@ using namespace std;
 
 // Default constructor
 Process::Process() {
-	setProcess(-1, 0, 0, 0, 0);
+	setProcess(-1, 0, 0, 0);
 	// Scheduler::incrementNumProcesses(); // add the
 }
 
 // Constructor
-Process::Process(int pid, int status, int priority, int burstTime, int type) {
-	setProcess(pid, status, priority, burstTime, type);
+Process::Process(int pid, int numPages, int status, int priority) {
+	setProcess(pid, numPages, status, priority);
 	// Scheduler::incrementNumProcesses();
 	// this->arrivalTime = setArrivalTime(); // set arrivalTime using current time returned by clock class
 }
@@ -19,20 +19,22 @@ Process::Process(int pid, int status, int priority, int burstTime, int type) {
 // Member functions
 
 // setters
-void Process::setProcess(int pid, int status, int priority, int burstTime) {
+void Process::setProcess(int pid, int numPages, int status, int priority) {
 	this->pid = pid; // unique process identifier
-	this->pc = pc; // Program counter, (for this simulation represents which "instruction" the process is currently on)
+	this->numPages = numPages;
 	this->status = status;
 	this->priority = priority;
-	this->burstTime = burstTime;
+	this->pc = 0; // initialize pc to 0, 1st instruction
+	// this->arrivalTime = // get arrivalTime from clock class
+	// this->pageTable = // initialize pageTable
 }
 
 void Process::setPriority(int priority) {
 	this->priority = priority;
 }
 
-void Process::setBurstTime(int bt) {
-	this->burstTime = bt;
+void Process::setPC(int pc) {
+	this->pc = pc;
 }
 
 void Process::setStatus(int s) {
