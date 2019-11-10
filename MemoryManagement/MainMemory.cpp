@@ -1,5 +1,6 @@
 #include "MainMemory.h"
 #include "Frame.h"
+#include "../ProcessManagement/Process.h"
 #include <iostream>
 #include <string>
 using namespace std;
@@ -22,33 +23,29 @@ MainMemory::MainMemory() {
 	}
 
 	this->numFreeFrames = 256;
+	this->numFreeVirtualFrames = 512;
 }
-
-
 
 
 // Member functions
 
-// setters
-// void MainMemory::setMainMemory(int pid, int status, int priority, int burstTime) {
-// 	this->pid = pid;
-// 	this->status = status;
-// 	this->priority = priority;
-// 	this->burstTime = burstTime;
-// }
+// Setters
+void MainMemory::setNumFreeFrames(int n) {
+	this->numFreeFrames = n;
+}
 
 void MainMemory::setFrame(int n, Frame f) {
 	this->frameArray[n] = f;
 }
 
+void MainMemory::setNumFreeVirtualFrames(int n) {
+	this->numFreeVirtualFrames = n;
+}
+
+
+// Getters
 Frame MainMemory::getFrame(int n) {
 	return this->frameArray[n];
 }
 
-void MainMemory::printFreeFrames() {
-	list<Frame>::iterator it;
-	for (it = this->freeFrameList.begin(); it != this->freeFrameList.end(); ++it){
-		cout << it->getAddress();
-		cout << " ";
-	}
-}
+// Utility functions

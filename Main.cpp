@@ -4,7 +4,9 @@ using namespace std;
 #include <queue>
 #include "ProcessManagement/Process.h"
 #include "ProcessManagement/Scheduler.h"
+#include "ProcessManagement/Instruction.h"
 #include "MemoryManagement/MainMemory.h"
+#include "MemoryManagement/Frame.h"
 #include "Clock.h"
 // #include "ProgramFileRandomizer.h"
 
@@ -32,12 +34,16 @@ int main(int argc, char**argv) {
 
 	// Process management
 	// Scheduler* scheduler = new class Scheduler(0); // declare scheduler, use firstComeFirstServe algorithm
-	// Scheduler* scheduler = new class Scheduler(1); // declare scheduler, use RR algorithm
-	// scheduler->setMainMemory(ram); // pass main memory to scheduler
+	Scheduler* scheduler = new class Scheduler(1); // declare scheduler, use RR algorithm
+	scheduler->setMainMemory(ram); // pass main memory to scheduler
 
 	// ************************************************************************
 
 	scheduler->readProgramFile("programFiles/randomFile1.txt"); // process a program file
+	scheduler->readProgramFile("programFiles/randomFile2.txt"); // process a program file
+
+	scheduler->printQueue(scheduler->getReadyQueue());
+
 
 	// where steps / loop cycles are run
 	// while (1) {

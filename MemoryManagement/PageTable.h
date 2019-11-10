@@ -6,7 +6,7 @@ class PageTable{
 
 	private:
 		int pid; // which process the PageTable belongs to
-		int table[][]; // first column is page num, 2nd column is frame num, 3rd column is valid/invalid bit
+		int table; // first column is page num, 2nd column is frame num, 3rd column is valid/invalid bit
 		// x  x  x
 		// x  x  x
 		// x  x  x
@@ -19,8 +19,8 @@ class PageTable{
 
 		// getters
 		int getPid() { return pid; }
-		int[][] getTable() { return table; }
-		int[] getRow(int pageIndex) { return table[pageIndex]; }
+		int getTable() { return table; }
+		int getRow(int pageIndex) { return table[pageIndex]; }
 		int getFrameIndex(int pageIndex) { return table[pageIndex][1]; }
 		int getValidBit(int pageIndex) { return table[pageIndex][2]; }
 

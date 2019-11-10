@@ -66,11 +66,13 @@ void Scheduler::readProgramFile(string filePath) {
 	string line;
 	string programName;
 	string totalRuntime;
-	string memory;
-	int calcValue;
-	int ioValue;
+	int memory;
+	list<Instruction> instructionList;
+	int numPagesNeeded;
+	bool hasRoom = false;
 
 	int pid = generatePid();
+	Process newProcess;
 
 	ifstream myfile (filePath);
 
@@ -86,18 +88,19 @@ void Scheduler::readProgramFile(string filePath) {
 					totalRuntime = line.substr(15, line.length()-1);
 
 				} else if (line.substr(0, 3).compare("Mem") == 0) { // memory
-					memory = line.substr(8, line.length()-1);
+					memory = stoi(line.substr(8, line.length()-1));
 
-					int numPagesNeeded = ceil(memory / 16); // number of pages needed to hold process
+					numPagesNeeded = ceil(memory / 16.0f); // number of pages needed to hold process
 
-					MainMemory* ram = getMainMemory;
+					MainMemory* ram = getMainMemory();
 
-					if (ram.getNumFreeFrames() < memory) {
+					if (ram->getNumFreeVirtualFrames() < memory) {
 						// cannot load into memory
-						cout << "Process could not be loaded into memory because process size: " << memory << " MB is greater than free memory: " << ram.getFreeSpace() << " GB." << endl;
+						cout << "Process could not be loaded into memory because process size: " << memory << " MB is greater than free virtual memory: " << ram->getNumFreeVirtualFrames() << " GB." << endl;
 						break;
 					} else {
-						// setProcess
+						// set boolean to true, later will be used to load process into memory
+						hasRoom = true;
 					}
 
 				} else if (line.substr(0, 3).compare("YIE") == 0) { // yield
@@ -106,28 +109,46 @@ void Scheduler::readProgramFile(string filePath) {
 				} else if (line.substr(0, 3).compare("OUT") == 0) { // out
 					// handle out command
 
-				} else if (line.substr(0, 3).compare("I/O") == 0) { // an i/o process
-					ioValue = stoi(line.substr(4, line.length()-1));
-					Process ioProcess;
-					ioProcess.setProcess(pid, 1, 0, ioValue, 1);
-					incrementNumProcesses();
+				} else if (line.substr(0, 3).compare("I/O") == 0) { // an i/o instruction
+					int ioValue = stoi(line.substr(4, line.length()-1));
+					instructionList.push_back(Instruction(1, ioValue, 0));
 
-					addToQueue(1, ioProcess);
-
-				} else if (line.substr(0, 3).compare("CAL") == 0) { // a calculate process
-					calcValue = stoi(line.substr(10, line.length()-1));
-
-					Process calcProcess;
-					calcProcess.setProcess(pid, 1, 0, calcValue, 0); // generate PID, set status to ready,
-					incrementNumProcesses();
-
-					addToQueue(1, calcProcess);
+				} else if (line.substr(0, 3).compare("CAL") == 0) { // a calculate instruction
+					int calcValue = stoi(line.substr(10, line.length()-1));
+					instructionList.push_back(Instruction(0, calcValue, 0));
 
 				} else if (line.substr(0, 3).compare("EXE") == 0) { // end command
 					break;
 				}
 			}
 		}
+
+		if (hasRoom) {
+
+			Instruction instructions[instructionList.size()];
+			list<Instruction>::iterator it; // iterator to move through list
+			int i = 0; // for indexing array
+
+			// for loop to populate array with elements in list
+			for (it = instructionList.begin(); it != instructionList.end(); ++it){
+				instructions[i] = *it;
+				i++;
+			}
+
+			newProcess.setProcess(pid, numPagesNeeded, 1, 0, instructions);
+			ram->setNumFreeVirtualFrames(ram->getNumFreeVirtualFrames() - numPagesNeeded);
+
+			newProcess.setPageTable(numPagesNeeded, ram);
+
+			addToQueue(1, newProcess); // add process to ready queue
+			incrementNumProcesses();
+			newProcess.printPageTable();
+
+		} else {
+			// add to loading buffer of some sort?
+			// "new" queue?
+		}
+
 		myfile.close();
 	} else {
 		cout << "Unable to open file";
@@ -184,30 +205,30 @@ int Scheduler::generatePid() {
 
 // run through processes, using scheduling parameters that were set,
 //	algorithm that was specified, etc.
-void Scheduler::run() {
-	cout << "Starting scheduler!!" << endl;
-	if (algorithm == 0) {
-		cout << "Prioritizing processes using First Come First Serve algorithm" << endl;
-	} else if (algorithm == 1) {
-		cout << "Prioritizing processes using Round Robin algorithm" << endl;
-	}
-
-	if (algorithm == 0) {
-		bool runFlag = true;
-		while (runFlag) { // while loop runs until every process has been executed
-			firstComeFirstServe(); // schedule processes,
-			dispatch(); // remove/add process to cpu depending on scheduling alogorithm
-
-			Process rp = getRunningProcess();
-
-			if (getReadyQueue().empty() && getWaitingQueue().empty()) { // end condition (will need to tweak later)
-				runFlag = false;
-			}
-		}
-	} else if (algorithm == 1) {
-		roundRobin();
-	}
-}
+// void Scheduler::run() {
+// 	cout << "Starting scheduler!!" << endl;
+// 	if (algorithm == 0) {
+// 		cout << "Prioritizing processes using First Come First Serve algorithm" << endl;
+// 	} else if (algorithm == 1) {
+// 		cout << "Prioritizing processes using Round Robin algorithm" << endl;
+// 	}
+//
+// 	if (algorithm == 0) {
+// 		bool runFlag = true;
+// 		while (runFlag) { // while loop runs until every process has been executed
+// 			firstComeFirstServe(); // schedule processes,
+// 			dispatch(); // remove/add process to cpu depending on scheduling alogorithm
+//
+// 			Process rp = getRunningProcess();
+//
+// 			if (getReadyQueue().empty() && getWaitingQueue().empty()) { // end condition (will need to tweak later)
+// 				runFlag = false;
+// 			}
+// 		}
+// 	} else if (algorithm == 1) {
+// 		roundRobin();
+// 	}
+// }
 
 void Scheduler::incrementNumProcesses() {
 	this->numProcesses++;
@@ -245,133 +266,133 @@ void Scheduler::addToQueue(int queue, Process process) {
 }
 
 
-void Scheduler::step() {
-
-	// check if there's a new file input, or some type of interrupt
-	//	if so, check if the running process can be interrupted
-	//	if it can, interrupt it
-	// 	if it can't (maybe it's I/O process, or in critical section), then wait
-
-	// 	check if there's a currently running process (status 3)
-	//		if no running process, pull next process according to scheduling algorithm
-	//		if there is, continue processing it according to scheduling algorithm
-
-	if (algorithm == 0) {
-		bool runFlag = true;
-		while (runFlag) { // while loop runs until every process has been executed
-			firstComeFirstServe(); // schedule processes,
-			dispatch(); // remove/add process to cpu depending on scheduling alogorithm
-
-			Process rp = getRunningProcess();
-
-			if (getReadyQueue().empty() && getWaitingQueue().empty()) { // end condition (will need to tweak later)
-				runFlag = false;
-			}
-		}
-	} else if (algorithm == 1) {
-		cout << "Using round robin step" << endl;
-		roundRobinStep();
-	}
-}
-
+// void Scheduler::step() {
+//
+// 	// check if there's a new file input, or some type of interrupt
+// 	//	if so, check if the running process can be interrupted
+// 	//	if it can, interrupt it
+// 	// 	if it can't (maybe it's I/O process, or in critical section), then wait
+//
+// 	// 	check if there's a currently running process (status 3)
+// 	//		if no running process, pull next process according to scheduling algorithm
+// 	//		if there is, continue processing it according to scheduling algorithm
+//
+// 	if (algorithm == 0) {
+// 		bool runFlag = true;
+// 		while (runFlag) { // while loop runs until every process has been executed
+// 			firstComeFirstServe(); // schedule processes,
+// 			dispatch(); // remove/add process to cpu depending on scheduling alogorithm
+//
+// 			Process rp = getRunningProcess();
+//
+// 			if (getReadyQueue().empty() && getWaitingQueue().empty()) { // end condition (will need to tweak later)
+// 				runFlag = false;
+// 			}
+// 		}
+// 	} else if (algorithm == 1) {
+// 		cout << "Using round robin step" << endl;
+// 		roundRobinStep();
+// 	}
+// }
+//
 
 // ----------------------- SCHEDULING ALGORITHMS ------------------------------
 
 // first come first serve scheduling algorithm
-void Scheduler::firstComeFirstServe() {
+// void Scheduler::firstComeFirstServe() {
+//
+// 	queue<Process> rq = getReadyQueue();
+// 	queue<Process> wq = getWaitingQueue();
+//
+// 	queue<Process> tempReadyQueue;
+// 	int priority = 0;
+//
+// 	while (!rq.empty()) {
+// 		tempReadyQueue.push(rq.front());
+// 		rq.pop();
+// 	}
+//
+// 	while(!tempReadyQueue.empty()) {
+// 		Process p = tempReadyQueue.front();
+// 		tempReadyQueue.pop();
+// 		p.setPriority(priority);
+// 		priority++;
+// 		rq.push(p);
+// 	}
+//
+// 	setReadyQueue(rq);
+// }
 
-	queue<Process> rq = getReadyQueue();
-	queue<Process> wq = getWaitingQueue();
 
-	queue<Process> tempReadyQueue;
-	int priority = 0;
-
-	while (!rq.empty()) {
-		tempReadyQueue.push(rq.front());
-		rq.pop();
-	}
-
-	while(!tempReadyQueue.empty()) {
-		Process p = tempReadyQueue.front();
-		tempReadyQueue.pop();
-		p.setPriority(priority);
-		priority++;
-		rq.push(p);
-	}
-
-	setReadyQueue(rq);
-}
-
-
-void Scheduler::roundRobinStep() {
-
-	int tq = 20; // time quantum
-
-	queue<Process> rq = getReadyQueue();
-
-	Process p = rq.front(); // get first process in queue
-	p.setStatus(3); // set process status as running
-	setRunningProcess(p); // set as running process
-	int bt = p.getBurstTime(); // get burst time
-
-	if (p.getBurstTime() > tq) { // if the burstTime is longer than the time quantum
-		cout << "Process is running with burst time longer than time quantum, it will be put back on the queue" << endl;
-		p.printProcess();
-		p.setBurstTime(bt-20); // take time quantum length of time off of the burst time
-		rq.pop(); // remove from queue, and...
-		p.setStatus(1); // set status back to ready and...
-		rq.push(p); // add to the end of queue
-	} else {
-		cout << "Process is running and will finish execution during this time quantum!! Congrats!!!" << endl;
-		p.printProcess();
-		rq.pop(); // remove from queue
-		p.setBurstTime(0); // set burstTime to 0
-		p.setStatus(4); // set status of process to terminated
-		addToQueue(4, p); // add process to exit queue
-	}
-
-	setReadyQueue(rq); // push the changes from the current iteration to the 'real' readyqueue
-
-}
+// void Scheduler::roundRobinStep() {
+//
+// 	int tq = 20; // time quantum
+//
+// 	queue<Process> rq = getReadyQueue();
+//
+// 	Process p = rq.front(); // get first process in queue
+// 	p.setStatus(3); // set process status as running
+// 	setRunningProcess(p); // set as running process
+// 	int bt = p.getBurstTime(); // get burst time
+//
+// 	if (p.getBurstTime() > tq) { // if the burstTime is longer than the time quantum
+// 		cout << "Process is running with burst time longer than time quantum, it will be put back on the queue" << endl;
+// 		p.printProcess();
+// 		p.setBurstTime(bt-20); // take time quantum length of time off of the burst time
+// 		rq.pop(); // remove from queue, and...
+// 		p.setStatus(1); // set status back to ready and...
+// 		rq.push(p); // add to the end of queue
+// 	} else {
+// 		cout << "Process is running and will finish execution during this time quantum!! Congrats!!!" << endl;
+// 		p.printProcess();
+// 		rq.pop(); // remove from queue
+// 		p.setBurstTime(0); // set burstTime to 0
+// 		p.setStatus(4); // set status of process to terminated
+// 		addToQueue(4, p); // add process to exit queue
+// 	}
+//
+// 	setReadyQueue(rq); // push the changes from the current iteration to the 'real' readyqueue
+//
+// }
 
 
 // round robin scheduling algorithm
-void Scheduler::roundRobin() {
-
-	int tq = 20; // time quantum
-
-	bool done = false;
-	while (!done) {
-
-		queue<Process> rq = getReadyQueue();
-		size_t size = rq.size(); // size of ready queue
-
-		while (size-- > 0) {
-			Process p = rq.front(); // get first process in queue
-			p.setStatus(3); // set process status as running
-			setRunningProcess(p); // set as running process
-			int bt = p.getBurstTime(); // get burst time
-			if (p.getBurstTime() > tq) { // if the burstTime is longer than the time quantum
-				cout << "Process is running with burst time longer than time quantum, it will be put back on the queue" << endl;
-				p.printProcess();
-				p.setBurstTime(bt-20); // take time quantum length of time off of the burst time
-				rq.pop(); // remove from queue, and...
-				p.setStatus(1); // set status back to ready and...
-				rq.push(p); // add to the end of queue
-			} else {
-				cout << "Process is running and will finish execution during this time quantum!! Congrats!!!" << endl;
-				p.printProcess();
-				rq.pop(); // remove from queue
-				p.setBurstTime(0); // set burstTime to 0
-				p.setStatus(4); // set status of process to terminated
-				addToQueue(4, p); // add process to exit queue
-			}
-		}
-
-		// reassess size of queue
-		size = rq.size();
-		if (size == 0) done = true; // if the queue is empty, stop
-
-		setReadyQueue(rq); // push the changes from the current iteration to the 'real' readyqueue
-	}
-}
+// void Scheduler::roundRobin() {
+//
+// 	int tq = 20; // time quantum
+//
+// 	bool done = false;
+// 	while (!done) {
+//
+// 		queue<Process> rq = getReadyQueue();
+// 		size_t size = rq.size(); // size of ready queue
+//
+// 		while (size-- > 0) {
+// 			Process p = rq.front(); // get first process in queue
+// 			p.setStatus(3); // set process status as running
+// 			setRunningProcess(p); // set as running process
+// 			int bt = p.getBurstTime(); // get burst time
+// 			if (p.getBurstTime() > tq) { // if the burstTime is longer than the time quantum
+// 				cout << "Process is running with burst time longer than time quantum, it will be put back on the queue" << endl;
+// 				p.printProcess();
+// 				p.setBurstTime(bt-20); // take time quantum length of time off of the burst time
+// 				rq.pop(); // remove from queue, and...
+// 				p.setStatus(1); // set status back to ready and...
+// 				rq.push(p); // add to the end of queue
+// 			} else {
+// 				cout << "Process is running and will finish execution during this time quantum!! Congrats!!!" << endl;
+// 				p.printProcess();
+// 				rq.pop(); // remove from queue
+// 				p.setBurstTime(0); // set burstTime to 0
+// 				p.setStatus(4); // set status of process to terminated
+// 				addToQueue(4, p); // add process to exit queue
+// 			}
+// 		}
+//
+// 		// reassess size of queue
+// 		size = rq.size();
+// 		if (size == 0) done = true; // if the queue is empty, stop
+//
+// 		setReadyQueue(rq); // push the changes from the current iteration to the 'real' readyqueue
+// 	}
+// }
