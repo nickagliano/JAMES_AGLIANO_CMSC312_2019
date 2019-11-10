@@ -6,7 +6,7 @@ class Instruction {
 
 	private:
 		// Instruction attributes
-		int type; // int to check if it's CALC, IO, YIELD, or OUT, 0, 1, 2, or 3
+		int type; // int to check if it's CALC, IO, YIELD, or OUT, 0, 1, 2, 3
 		int burstTime;
 		int burstTimeLeft;
 		bool isCritical;

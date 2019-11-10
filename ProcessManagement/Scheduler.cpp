@@ -125,24 +125,13 @@ void Scheduler::readProgramFile(string filePath) {
 
 		if (hasRoom) {
 
-			Instruction instructions[instructionList.size()];
-			list<Instruction>::iterator it; // iterator to move through list
-			int i = 0; // for indexing array
 
-			// for loop to populate array with elements in list
-			for (it = instructionList.begin(); it != instructionList.end(); ++it){
-				instructions[i] = *it;
-				i++;
-			}
-
-			newProcess.setProcess(pid, numPagesNeeded, 1, 0, instructions);
+			newProcess.setProcess(pid, numPagesNeeded, 1, 0, instructionList);
 			ram->setNumFreeVirtualFrames(ram->getNumFreeVirtualFrames() - numPagesNeeded);
-
-			newProcess.setPageTable(numPagesNeeded, ram);
 
 			addToQueue(1, newProcess); // add process to ready queue
 			incrementNumProcesses();
-			newProcess.printPageTable();
+
 
 		} else {
 			// add to loading buffer of some sort?
@@ -266,35 +255,35 @@ void Scheduler::addToQueue(int queue, Process process) {
 }
 
 
-// void Scheduler::step() {
-//
-// 	// check if there's a new file input, or some type of interrupt
-// 	//	if so, check if the running process can be interrupted
-// 	//	if it can, interrupt it
-// 	// 	if it can't (maybe it's I/O process, or in critical section), then wait
-//
-// 	// 	check if there's a currently running process (status 3)
-// 	//		if no running process, pull next process according to scheduling algorithm
-// 	//		if there is, continue processing it according to scheduling algorithm
-//
-// 	if (algorithm == 0) {
-// 		bool runFlag = true;
-// 		while (runFlag) { // while loop runs until every process has been executed
-// 			firstComeFirstServe(); // schedule processes,
-// 			dispatch(); // remove/add process to cpu depending on scheduling alogorithm
-//
-// 			Process rp = getRunningProcess();
-//
-// 			if (getReadyQueue().empty() && getWaitingQueue().empty()) { // end condition (will need to tweak later)
-// 				runFlag = false;
-// 			}
-// 		}
-// 	} else if (algorithm == 1) {
-// 		cout << "Using round robin step" << endl;
-// 		roundRobinStep();
-// 	}
-// }
-//
+void Scheduler::step() {
+
+	// check if there's a new file input, or some type of interrupt
+	//	if so, check if the running process can be interrupted
+	//	if it can, interrupt it
+	// 	if it can't (maybe it's I/O process, or in critical section), then wait
+
+	// 	check if there's a currently running process (status 3)
+	//		if no running process, pull next process according to scheduling algorithm
+	//		if there is, continue processing it according to scheduling algorithm
+
+	if (algorithm == 0) {
+		bool runFlag = true;
+		while (runFlag) { // while loop runs until every process has been executed
+			// firstComeFirstServe(); // schedule processes,
+			// dispatch(); // remove/add process to cpu depending on scheduling alogorithm
+			//
+			// Process rp = getRunningProcess();
+			//
+			// if (getReadyQueue().empty() && getWaitingQueue().empty()) { // end condition (will need to tweak later)
+			// 	runFlag = false;
+			// }
+		}
+	} else if (algorithm == 1) {
+		cout << "Using round robin step" << endl;
+		roundRobinStep();
+	}
+}
+
 
 // ----------------------- SCHEDULING ALGORITHMS ------------------------------
 
@@ -324,36 +313,38 @@ void Scheduler::addToQueue(int queue, Process process) {
 // }
 
 
-// void Scheduler::roundRobinStep() {
-//
-// 	int tq = 20; // time quantum
-//
-// 	queue<Process> rq = getReadyQueue();
-//
-// 	Process p = rq.front(); // get first process in queue
-// 	p.setStatus(3); // set process status as running
-// 	setRunningProcess(p); // set as running process
-// 	int bt = p.getBurstTime(); // get burst time
-//
-// 	if (p.getBurstTime() > tq) { // if the burstTime is longer than the time quantum
-// 		cout << "Process is running with burst time longer than time quantum, it will be put back on the queue" << endl;
-// 		p.printProcess();
-// 		p.setBurstTime(bt-20); // take time quantum length of time off of the burst time
-// 		rq.pop(); // remove from queue, and...
-// 		p.setStatus(1); // set status back to ready and...
-// 		rq.push(p); // add to the end of queue
-// 	} else {
-// 		cout << "Process is running and will finish execution during this time quantum!! Congrats!!!" << endl;
-// 		p.printProcess();
-// 		rq.pop(); // remove from queue
-// 		p.setBurstTime(0); // set burstTime to 0
-// 		p.setStatus(4); // set status of process to terminated
-// 		addToQueue(4, p); // add process to exit queue
-// 	}
-//
-// 	setReadyQueue(rq); // push the changes from the current iteration to the 'real' readyqueue
-//
-// }
+void Scheduler::roundRobinStep() {
+
+	int tq = 20; // time quantum
+
+	queue<Process> rq = getReadyQueue();
+
+	Process p = rq.front(); // get first process in queue
+	p.setStatus(3); // set process status as running
+	setRunningProcess(p); // set as running process
+	int pc = p.getPC(); // get current PC of process
+
+	list<Instruction> instructions = p.getInstructions();
+
+	// if (bt > tq) { // if the burstTime is longer than the time quantum
+	// 	cout << "Process is running with burst time longer than time quantum, it will be put back on the queue" << endl;
+	// 	p.printProcess();
+	// 	p.setInstruction(pc, bt-20); // take time quantum length of time off of the burst time
+	// 	rq.pop(); // remove from queue, and...
+	// 	p.setStatus(1); // set status back to ready and...
+	// 	rq.push(p); // add to the end of queue
+	// } else {
+	// 	cout << "Process is running and will finish execution during this time quantum!! Congrats!!!" << endl;
+	// 	p.printProcess();
+	// 	rq.pop(); // remove from queue
+	// 	p.getInstruction(pc).setBurstTimeLeft(0); // take time quantum length of time off of the burst time
+	// 	p.setStatus(4); // set status of process to terminated
+	// 	addToQueue(4, p); // add process to exit queue
+	// }
+	//
+	// setReadyQueue(rq); // push the changes from the current iteration to the 'real' readyqueue
+
+}
 
 
 // round robin scheduling algorithm

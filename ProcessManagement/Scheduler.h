@@ -14,11 +14,11 @@ class Scheduler {
 		queue<Process> waitingQueue;
 		queue<Process> exitQueue;
 		list<Process> blockedQueue;
-		Process runningProcess;
 		int algorithm;
 		int pidCounter;
 		int numProcesses;
 		MainMemory* ram;
+		Process runningProcess;
 
 	public:
 		// default constructor

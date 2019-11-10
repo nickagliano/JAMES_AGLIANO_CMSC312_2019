@@ -7,6 +7,7 @@ using namespace std;
 #include "ProcessManagement/Instruction.h"
 #include "MemoryManagement/MainMemory.h"
 #include "MemoryManagement/Frame.h"
+#include "ProgramFileRandomizer.h"
 #include "Clock.h"
 // #include "ProgramFileRandomizer.h"
 
@@ -17,7 +18,7 @@ int systemStatus = 0;
 int main(int argc, char**argv) {
 
 	// **************** program file generation code **************************
-	// ProgramFileRandomizer* ProgramFileRandomizer = new class ProgramFileRandomizer();
+	ProgramFileRandomizer* ProgramFileRandomizer = new class ProgramFileRandomizer();
 	//
 	// ProgramFileRandomizer->randomize();
 
@@ -25,7 +26,7 @@ int main(int argc, char**argv) {
 
 	// Declaration of OS components
 
-	// Clock* clock = new class Clock(); // clock
+	Clock* clock = new class Clock(); // clock
 
 	// Memory management
 	MainMemory* ram = new class MainMemory(); // main memory / physical memory / RAM
@@ -41,11 +42,20 @@ int main(int argc, char**argv) {
 
 	scheduler->readProgramFile("programFiles/randomFile1.txt"); // process a program file
 	scheduler->readProgramFile("programFiles/randomFile2.txt"); // process a program file
+	scheduler->readProgramFile("programFiles/randomFile3.txt"); // process a program file
+	scheduler->readProgramFile("programFiles/randomFile4.txt"); // process a program file
+
+	for (int i = 0; i < 300; i++) {
+		ProgramFileRandomizer->randomize();
+		scheduler->readProgramFile("programFiles/random.txt"); // process a program file
+	}
 
 	scheduler->printQueue(scheduler->getReadyQueue());
+	cout << "number of free virtual frames: " << scheduler->getMainMemory()->getNumFreeVirtualFrames() << endl;
 
+	// scheduler->step();
 
-	// where steps / loop cycles are run
+	// // where steps / loop cycles are run
 	// while (1) {
 	//
 	// 	if (scheduler->getReadyQueue().size() > 0) {
@@ -58,7 +68,6 @@ int main(int argc, char**argv) {
 	//
 	// 		break;
 	// 	}
-
 	// }
 
 	// scheduler->run();

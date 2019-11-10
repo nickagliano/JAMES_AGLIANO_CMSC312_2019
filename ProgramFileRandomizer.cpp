@@ -19,7 +19,7 @@ void ProgramFileRandomizer::randomize() {
 
 	// open output file
 	ofstream myfile;
-	myfile.open ("example.txt");
+	myfile.open ("programFiles/random.txt");
 
 	// Assign program file header information
 	myfile << "Name: ProgramName\n";
