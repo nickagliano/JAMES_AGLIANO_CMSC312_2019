@@ -2,6 +2,7 @@
 #define PROCESS_H
 
 #include "../MemoryManagement/MainMemory.h"
+#include "../MemoryManagement/PageTable.h"
 #include "Instruction.h"
 
 
@@ -16,6 +17,7 @@ class Process {
 		int arrivalTime; // when the process was brought into memory
 		int status; // 0, 1, 2, 3, 4 == new, ready, waiting, running, terminated
 		int priority; // 0 is highest
+		PageTable* pageTable; 
 		list<Instruction> instructions;
 
 
@@ -31,6 +33,7 @@ class Process {
 		int getArrivalTime()  { return arrivalTime; }
 		int getNumPages()  { return numPages; }
 		list<Instruction> getInstructions()  { return instructions; }
+		PageTable* getPageTable()  { return pageTable; }
 
 		// setters
 		void setProcess(int pid, int numPages, int status, int priority, list<Instruction> instructions);

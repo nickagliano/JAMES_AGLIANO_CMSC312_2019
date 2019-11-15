@@ -124,14 +124,11 @@ void Scheduler::readProgramFile(string filePath) {
 		}
 
 		if (hasRoom) {
-
-
 			newProcess.setProcess(pid, numPagesNeeded, 1, 0, instructionList);
 			ram->setNumFreeVirtualFrames(ram->getNumFreeVirtualFrames() - numPagesNeeded);
 
 			addToQueue(1, newProcess); // add process to ready queue
 			incrementNumProcesses();
-
 
 		} else {
 			// add to loading buffer of some sort?
@@ -280,7 +277,7 @@ void Scheduler::step() {
 		}
 	} else if (algorithm == 1) {
 		cout << "Using round robin step" << endl;
-		roundRobinStep();
+		roundRobinStep(20);
 	}
 }
 
@@ -313,36 +310,52 @@ void Scheduler::step() {
 // }
 
 
-void Scheduler::roundRobinStep() {
+// this method is still in the process of transition from process to instruction level after adding instructions
+void Scheduler::roundRobinStep(int tq) {
 
-	int tq = 20; // time quantum
+	int tqRemaining = tq; // time quantum
 
-	queue<Process> rq = getReadyQueue();
-
-	Process p = rq.front(); // get first process in queue
+	queue<Process> rq = getReadyQueue(); // get ready queue object
+	Process p = rq.front(); // get first process in ready queue
+	
 	p.setStatus(3); // set process status as running
-	setRunningProcess(p); // set as running process
-	int pc = p.getPC(); // get current PC of process
+	setRunningProcess(p); // set as running process (for scheduler)
 
-	list<Instruction> instructions = p.getInstructions();
+	list<Instruction> instructions = p.getInstructions(); // get list of instructions from process
+	
+	for (int i = 0; i < tq; i++) {
+		Instruction currentInstruction = instructions.front(); 
+		
+		if (currentInstruction.getType() == 0) { // if it's a calc instruction
+			currentInstruction.setBurstTimeLeft(currentInstruction.getBurstTimeLeft()-1); // decrement burstTimeLeft
+			
+			if (currentInstruction.getBurstTimeLeft() == 0) { // if current calc instruction finished
+				instructions.pop_front(); // pop off the instruction that finished
+			} else {
+				// if it's the last instruction, finish and execution and add to exit queue
+				rq.pop(); // remove from queue
+				p.getInstruction(pc).setBurstTimeLeft(0); // take time quantum length of time off of the burst time
+				p.setStatus(4); // set status of process to terminated
+				addToQueue(4, p); // add process to exit queue
+			}
+		} else if (currentInstruction.getType() == 1) { // IO instruction, put process in waiting state, add to waiting queue
+			
+		} else if (currentInstruction.getType() == 2) { // Yield
+			
+		} else if (currentInstruction.getType() == 3) { // Out
+			
+		}
+		tqRemaining--;
+	}
+	
+	if (tqRemaining != 0) roundRobinStep(tqRemaining);
+	
+	// if process hasn't finished, but reached time quantum, add it to the back of the queue
+	// rq.pop(); // remove from queue, and...
+	// p.setStatus(1); // set status back to ready and...
+	// rq.push(p); // add to the end of queue
 
-	// if (bt > tq) { // if the burstTime is longer than the time quantum
-	// 	cout << "Process is running with burst time longer than time quantum, it will be put back on the queue" << endl;
-	// 	p.printProcess();
-	// 	p.setInstruction(pc, bt-20); // take time quantum length of time off of the burst time
-	// 	rq.pop(); // remove from queue, and...
-	// 	p.setStatus(1); // set status back to ready and...
-	// 	rq.push(p); // add to the end of queue
-	// } else {
-	// 	cout << "Process is running and will finish execution during this time quantum!! Congrats!!!" << endl;
-	// 	p.printProcess();
-	// 	rq.pop(); // remove from queue
-	// 	p.getInstruction(pc).setBurstTimeLeft(0); // take time quantum length of time off of the burst time
-	// 	p.setStatus(4); // set status of process to terminated
-	// 	addToQueue(4, p); // add process to exit queue
-	// }
-	//
-	// setReadyQueue(rq); // push the changes from the current iteration to the 'real' readyqueue
+	setReadyQueue(rq); // push the changes from the current iteration to the 'real' readyqueue
 
 }
 

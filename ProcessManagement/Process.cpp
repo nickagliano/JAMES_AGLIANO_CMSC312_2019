@@ -15,6 +15,7 @@ Process::Process() {
 Process::Process(int pid, int numPages, int status, int priority, list<Instruction> instructions) {
 	setProcess(pid, numPages, status, priority, instructions);
 	// Scheduler::incrementNumProcesses();
+	this->pageTable = new class PageTable(pid, numPages);
 	// this->arrivalTime = setArrivalTime(); // set arrivalTime using current time returned by clock class
 }
 

@@ -2,14 +2,14 @@
 using namespace std;
 #include <string>
 #include <queue>
+#include "ProgramFileRandomizer.h"
+#include "Clock.h"
 #include "ProcessManagement/Process.h"
 #include "ProcessManagement/Scheduler.h"
 #include "ProcessManagement/Instruction.h"
 #include "MemoryManagement/MainMemory.h"
 #include "MemoryManagement/Frame.h"
-#include "ProgramFileRandomizer.h"
-#include "Clock.h"
-// #include "ProgramFileRandomizer.h"
+#include "MemoryManagement/PageTable.h"
 
 // Declare global variables
 int systemStatus = 0;
@@ -25,7 +25,7 @@ int main(int argc, char**argv) {
 	// ************************************************************************
 
 	// Declaration of OS components
-
+	
 	Clock* clock = new class Clock(); // clock
 
 	// Memory management
@@ -41,34 +41,34 @@ int main(int argc, char**argv) {
 	// ************************************************************************
 
 	scheduler->readProgramFile("programFiles/randomFile1.txt"); // process a program file
-	scheduler->readProgramFile("programFiles/randomFile2.txt"); // process a program file
-	scheduler->readProgramFile("programFiles/randomFile3.txt"); // process a program file
-	scheduler->readProgramFile("programFiles/randomFile4.txt"); // process a program file
-
-	for (int i = 0; i < 300; i++) {
-		ProgramFileRandomizer->randomize();
-		scheduler->readProgramFile("programFiles/random.txt"); // process a program file
-	}
-
+	// scheduler->readProgramFile("programFiles/randomFile2.txt"); // process a program file
+	// scheduler->readProgramFile("programFiles/randomFile3.txt"); // process a program file
+	// scheduler->readProgramFile("programFiles/randomFile4.txt"); // process a program file
+	// 
+	// for (int i = 0; i < 300; i++) {
+	// 	ProgramFileRandomizer->randomize();
+	// 	scheduler->readProgramFile("programFiles/random.txt"); // process a program file
+	// }
+	// 
 	scheduler->printQueue(scheduler->getReadyQueue());
 	cout << "number of free virtual frames: " << scheduler->getMainMemory()->getNumFreeVirtualFrames() << endl;
 
 	// scheduler->step();
 
 	// // where steps / loop cycles are run
-	// while (1) {
-	//
-	// 	if (scheduler->getReadyQueue().size() > 0) {
-	// 		scheduler->step();
-	// 		clock->step(); // increment clock by 1 loop cycle
-	// 		cout << clock->getTime() << endl;
-	// 	} else {
-	// 		cout << "Nothing in ready queue" << endl;
-	// 		cout << "Finished in: " << clock->getTime() << " loop cycles."<< endl;
-	//
-	// 		break;
-	// 	}
-	// }
+	while (1) {
+	
+		if (scheduler->getReadyQueue().size() > 0) {
+			scheduler->step();
+			clock->step(); // increment clock by 1 loop cycle
+			cout << clock->getTime() << endl;
+		} else {
+			cout << "Nothing in ready queue" << endl;
+			cout << "Finished in: " << clock->getTime() << " loop cycles."<< endl;
+	
+			break;
+		}
+	}
 
 	// scheduler->run();
 
