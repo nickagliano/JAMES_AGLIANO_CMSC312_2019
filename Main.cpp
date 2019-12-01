@@ -1,4 +1,5 @@
 #include <iostream>
+#include <pthread.h>
 using namespace std;
 #include <string>
 #include <queue>
@@ -41,7 +42,7 @@ int main(int argc, char**argv) {
 	// ************************************************************************
 
 	scheduler->readProgramFile("programFiles/randomFile1.txt"); // process a program file
-	// scheduler->readProgramFile("programFiles/randomFile2.txt"); // process a program file
+	scheduler->readProgramFile("programFiles/randomFile2.txt"); // process a program file
 	// scheduler->readProgramFile("programFiles/randomFile3.txt"); // process a program file
 	// scheduler->readProgramFile("programFiles/randomFile4.txt"); // process a program file
 	// 
@@ -50,28 +51,33 @@ int main(int argc, char**argv) {
 	// 	scheduler->readProgramFile("programFiles/random.txt"); // process a program file
 	// }
 	// 
-	scheduler->printQueue(scheduler->getReadyQueue());
-	cout << "number of free virtual frames: " << scheduler->getMainMemory()->getNumFreeVirtualFrames() << endl;
+	// scheduler->printQueue(scheduler->getReadyQueue());
+	// cout << "number of free virtual frames: " << scheduler->getMainMemory()->getNumFreeVirtualFrames() << endl;
 
-	// scheduler->step();
-
-	// // where steps / loop cycles are run
-	while (1) {
-	
-		if (scheduler->getReadyQueue().size() > 0) {
-			scheduler->step();
-			clock->step(); // increment clock by 1 loop cycle
-			cout << clock->getTime() << endl;
-		} else {
-			cout << "Nothing in ready queue" << endl;
-			cout << "Finished in: " << clock->getTime() << " loop cycles."<< endl;
-	
-			break;
-		}
-	}
-
+	// main loop -- where steps / loop cycles are run
+	// while (1) {
+	// 
+	// 	if (scheduler->getWaitingQueue().size() > 0) {
+	// 		queue<Process> wq = scheduler->getWaitingQueue();
+	// 		// decrease wait times for all processes in waitQueue
+	// 		// when wait time left = 0 (aka burst time left for i/o inst.), add to ready queue
+	// 	}
+	// 
+	// 	if (scheduler->getReadyQueue().size() > 0) {
+	// 		scheduler->step(); 
+	// 		clock->step(); // increment clock by 1 loop cycle
+	// 		cout << clock->getTime() << endl;
+	// 	} else {
+	// 		cout << "Nothing in ready queue" << endl;
+	// 		cout << "Finished in: " << clock->getTime() << " loop cycles."<< endl;
+	// 		scheduler->printQueue(scheduler->getWaitingQueue());
+	// 		break;
+	// 	}
+	// }
 	// scheduler->run();
+	
+	scheduler->threadTest();
 
-	// scheduler->printQueue(scheduler->getExitQueue());
+
 
 }

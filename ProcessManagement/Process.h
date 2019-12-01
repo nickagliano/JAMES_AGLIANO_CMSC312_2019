@@ -12,7 +12,7 @@ class Process {
 	private:
 		// Process attributes (virtual PCB)
 		int pid;
-		int pc; // program counter
+		int pc; // program counter, (not needed?)
 		int numPages; // how many pages the process takes up
 		int arrivalTime; // when the process was brought into memory
 		int status; // 0, 1, 2, 3, 4 == new, ready, waiting, running, terminated

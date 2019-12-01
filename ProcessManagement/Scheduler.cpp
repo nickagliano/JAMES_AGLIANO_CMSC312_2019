@@ -4,11 +4,16 @@
 #include <queue>
 #include <list>
 #include <math.h>
+#include <pthread.h>
+#include <semaphore.h>
 using namespace std;
 
 #include "Process.h"
 #include "Scheduler.h"
 #include "../MemoryManagement/MainMemory.h"
+
+const int NUM_THREADS = 4;
+static pthread_mutex_t func_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 
 // Default constructor
@@ -34,6 +39,10 @@ Scheduler::Scheduler(int algorithm) {
 
 void Scheduler::setReadyQueue(queue<Process> rq) {
 	this->readyQueue = rq;
+}
+
+void Scheduler::setWaitingQueue(queue<Process> wq) {
+	this->waitingQueue = wq;
 }
 
 void Scheduler::setExitQueue(queue<Process> eq) {
@@ -309,13 +318,54 @@ void Scheduler::step() {
 // 	setReadyQueue(rq);
 // }
 
+void* worker (void* arg) {
+	int value = *((int*) arg);
+	
+	cout << value << endl;
+	
+	return 0;
+}
+
+// sample function using mutex lock
+void func() {
+	pthread_mutex_lock(&func_mutex);
+	
+	// do thing here
+	
+	pthread_mutex_unlock(&func_mutex);
+}
+
+
+void Scheduler::threadTest() {
+	pthread_t threads[NUM_THREADS];
+	
+	int thread_args[NUM_THREADS];
+	
+	int result;
+	
+	for (int i = 0; i < NUM_THREADS; i++) {
+		thread_args[i] = i;
+		result = pthread_create(&threads[i], 0, worker, (void*) &thread_args[i]); // (id, "p_thread attr t_structure instance", )
+	}
+	
+	for (int i = 0; i < NUM_THREADS; i++) { // wait for worker threads to finish
+		result = pthread_join(threads[i], 0);
+	}
+	
+}
+
 
 // this method is still in the process of transition from process to instruction level after adding instructions
 void Scheduler::roundRobinStep(int tq) {
+	
+
 
 	int tqRemaining = tq; // time quantum
 
 	queue<Process> rq = getReadyQueue(); // get ready queue object
+	queue<Process> eq = getExitQueue(); // get exit queue object
+	queue<Process> wq = getWaitingQueue(); // get waiting queue object
+	
 	Process p = rq.front(); // get first process in ready queue
 	
 	p.setStatus(3); // set process status as running
@@ -324,39 +374,53 @@ void Scheduler::roundRobinStep(int tq) {
 	list<Instruction> instructions = p.getInstructions(); // get list of instructions from process
 	
 	for (int i = 0; i < tq; i++) {
-		Instruction currentInstruction = instructions.front(); 
+		Instruction currentInstruction = instructions.front(); // get current instruction
 		
 		if (currentInstruction.getType() == 0) { // if it's a calc instruction
 			currentInstruction.setBurstTimeLeft(currentInstruction.getBurstTimeLeft()-1); // decrement burstTimeLeft
+			instructions.front() = currentInstruction;
+			cout << "burst time left: " << currentInstruction.getBurstTimeLeft() << endl;
 			
 			if (currentInstruction.getBurstTimeLeft() == 0) { // if current calc instruction finished
 				instructions.pop_front(); // pop off the instruction that finished
-			} else {
-				// if it's the last instruction, finish and execution and add to exit queue
-				rq.pop(); // remove from queue
-				p.getInstruction(pc).setBurstTimeLeft(0); // take time quantum length of time off of the burst time
-				p.setStatus(4); // set status of process to terminated
-				addToQueue(4, p); // add process to exit queue
-			}
+			} 
 		} else if (currentInstruction.getType() == 1) { // IO instruction, put process in waiting state, add to waiting queue
-			
+			rq.pop(); // remove process from ready queue
+			p.setStatus(2); // set status of process to waiting/blocked
+			wq.push(p); // add to waiting queue
+			break; // end round robin step
 		} else if (currentInstruction.getType() == 2) { // Yield
-			
+			instructions.pop_front(); // pop off the YIELD instruction
+			p.setInstructions(instructions); // update changes to instructions
+			break; // yield -- ending round robin step
 		} else if (currentInstruction.getType() == 3) { // Out
-			
+			cout << "-- OUT instruction encountered --" << endl;
+			p.printProcess();
+			instructions.pop_front(); // pop off the OUT instruction
 		}
-		tqRemaining--;
+		
+		p.setInstructions(instructions); // update changes to instructions
+		tqRemaining--; // keep track of remaining tq, (not sure if I'll needs this yet)
+		
+		if (instructions.empty()) break; // if instructions are empty, process is done -- break the for-loop
 	}
 	
-	if (tqRemaining != 0) roundRobinStep(tqRemaining);
+	if (instructions.empty()) { // if process finished, add to exit queue
+		rq.pop(); // remove from ready queue, and...
+		p.setStatus(4); // set status to terminated and...
+		eq.push(p); // add to exit queue
+	} else if (instructions.front().getType() == 1) { // stopped executing bc it's an IO instruction
+		
+	} else { // process hasn't finished, add it to the back of the ready queue
+		rq.pop(); // remove from ready queue, and...
+		p.setStatus(1); // set status back to ready and...
+		rq.push(p); // add to the end of ready queue
+	}
 	
-	// if process hasn't finished, but reached time quantum, add it to the back of the queue
-	// rq.pop(); // remove from queue, and...
-	// p.setStatus(1); // set status back to ready and...
-	// rq.push(p); // add to the end of queue
-
-	setReadyQueue(rq); // push the changes from the current iteration to the 'real' readyqueue
-
+	setReadyQueue(rq); // push the changes from the roundRobinStep to the ready queue
+	setWaitingQueue(wq); // push changes to waiting queue
+	setExitQueue(eq); // push changes to exit queue
+	
 }
 
 

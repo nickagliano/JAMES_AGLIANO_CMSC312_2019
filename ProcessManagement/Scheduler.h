@@ -13,7 +13,6 @@ class Scheduler {
 		queue<Process> readyQueue;
 		queue<Process> waitingQueue;
 		queue<Process> exitQueue;
-		list<Process> blockedQueue;
 		int algorithm;
 		int pidCounter;
 		int numProcesses;
@@ -33,7 +32,6 @@ class Scheduler {
 		queue<Process> getReadyQueue() { return readyQueue; }
 		queue<Process> getWaitingQueue() { return waitingQueue; }
 		queue<Process> getExitQueue() { return exitQueue; }
-		list<Process> getBlockedQueue() { return blockedQueue; }
 		Process getRunningProcess() { return runningProcess; }
 		int getPidCounter() { return pidCounter; }
 		int getNumProcesses() { return numProcesses; }
@@ -41,8 +39,9 @@ class Scheduler {
 
 
 		// setters (need to figure out what i need to be able to set)
-		void setExitQueue(queue<Process> eq);
 		void setReadyQueue(queue<Process> rq);
+		void setWaitingQueue(queue<Process> wq);
+		void setExitQueue(queue<Process> eq);
 		void setRunningProcess(Process p);
 		void setAlgorithm(int algorithm);
 		void setMainMemory(MainMemory* ram);
@@ -58,11 +57,12 @@ class Scheduler {
 		void addToQueue(int queue, Process p);
 		// void removeFromQueue(int queue, int pid);
 		void printQueue(queue<Process> queue);
+		void threadTest();
 
 		// scheduling algorithms
 		void firstComeFirstServe();
 		void roundRobin();
-		void roundRobinStep();
+		void roundRobinStep(int tq);
 
 
 };
